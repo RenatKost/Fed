@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pilot.callsign }} - Профіль пілота{% endblock %}
+
+{% block content %}
+<section class="pilot-profile">
+    <div class="container">
+        <!-- Заголовок профілю -->
+        <div class="pilot-header">
+            <img src="{{ url_for('static', filename='images/' + pilot.photo_url) }}" 
+                 alt="{{ pilot.callsign }}" 
+                 class="pilot-avatar"
+                 onerror="this.src='{{ url_for('static', filename='images/default-pilot.svg') }}'">
+            <div class="pilot-info">
+                <h1>{{ pilot.callsign }}</h1>
+                <div class="pilot-meta">
+                    <span class="pilot-category category-{{ pilot.category }}">
+                        {% if pilot.category == 'strike' %}Ударний пілот{% else %}Розвідувальний пілот{% endif %}
+                    </span>
+                </div>
+                <div class="pilot-meta">
+                    <strong>Дата вступу:</strong> {{ pilot.join_date.strftime('%d.%m.%Y') }}
+                </div>
+                <div class="pilot-points">{{ pilot.points }} очок</div>
+            </div>
+            
+            <!-- Компактный ID и QR код -->
+            <div class="pilot-id-card">
+                <div class="id-info">
+                    <div class="pilot-id-number">{{ pilot.pilot_id }}</div>
+                    <div class="id-status">ID карта активна</div>
+                </div>
+                <div class="qr-mini">
+                    <iframe src="{{ url_for('generate_qr', qr_code=pilot.qr_code) }}" 
+                            width="160" 
+                            height="160" 
+                            frameborder="0"
+                            scrolling="no">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Досягнення -->
+        <div class="achievements-section">
+            <h2>Досягнення</h2>
+            {% if achievements %}
+                <div class="achievements-list">
+                    {% for achievement in achievements %}
+                    <div class="achievement-item">
+                        <div class="achievement-info">
+                            <div class="achievement-description">{{ achievement.description }}</div>
+                            <div class="achievement-date">{{ achievement.date_awarded.strftime('%d.%m.%Y') }}</div>
+                        </div>
+                        <div class="achievement-points">+{{ achievement.points }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-achievements">
+                    <p>Поки що досягнення відсутні</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Статистика -->
+        <div class="pilot-stats">
+            <h2>Статистика</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">{{ pilot.points }}</div>
+                    <div class="stat-label">Загальні очки</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ achievements|length }}</div>
+                    <div class="stat-label">Досягнення</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">
+                        {% set rank = 1 %}
+                        {% if pilot.category == 'strike' %}
+                            {% for p in all_strike_pilots %}
+                                {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% for p in all_recon_pilots %}
+                                {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="stat-label">Місце в категорії</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ days_in_federation }}</div>
+                    <div class="stat-label">Днів у федерації</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Навігація -->
+        <div class="profile-navigation">
+            <a href="{{ url_for('rating') }}" class="btn btn-secondary">← Повернутися до рейтингу</a>
+        </div>
+    </div>
+</section>
+
+<style>
+.pilot-id-card {
+    background: var(--card-gradient);
+    border: 2px solid var(--border-success);
+    border-radius: 12px;
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 400px;
+}
+
+.id-info {
+    flex: 1;
+}
+
+.pilot-id-number {
+    font-size: var(--font-lg);
+    font-weight: 700;
+    color: var(--text-success);
+    font-family: var(--font-mono);
+    margin-bottom: var(--spacing-xs);
+}
+
+.id-status {
+    color: var(--text-success);
+    font-size: var(--font-sm);
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.qr-mini {
+    flex-shrink: 0;
+    margin-left: var(--spacing-md);
+}
+
+.qr-mini iframe {
+    border-radius: 4px;
+    background: white;
+    overflow: hidden;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .pilot-id-card {
+        flex-direction: column;
+        text-align: center;
+        max-width: 100%;
+    }
+    
+    .qr-mini {
+        margin-left: 0;
+        margin-top: var(--spacing-md);
+    }
+}
+
+.qr-section {
+    margin: var(--spacing-2xl) 0;
+}
+
+.qr-container {
+    text-align: center;
+    margin: var(--spacing-lg) 0;
+}
+
+.qr-link {
+    text-align: center;
+    color: var(--text-tertiary);
+    margin-top: var(--spacing-md);
+}
+
+.achievements-list {
+    margin-top: var(--spacing-lg);
+}
+
+.achievement-item {
+    background: var(--card-gradient);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.achievement-item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card);
+}
+
+.achievement-description {
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+}
+
+.achievement-date {
+    color: var(--text-tertiary);
+    font-size: var(--font-sm);
+}
+
+.achievement-points {
+    color: var(--text-success);
+    font-weight: 700;
+    font-size: var(--font-lg);
+}
+
+.no-achievements {
+    text-align: center;
+    padding: var(--spacing-2xl);
+    color: var(--text-tertiary);
+}
+
+.pilot-stats {
+    margin: var(--spacing-2xl) 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+}
+
+.stat-card {
+    background: var(--card-gradient);
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    padding: var(--spacing-lg);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+}
+
+.stat-value {
+    font-size: var(--font-3xl);
+    font-weight: 700;
+    color: var(--text-success);
+    margin-bottom: var(--spacing-sm);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: var(--font-sm);
+}
+
+.profile-navigation {
+    margin-top: var(--spacing-2xl);
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .pilot-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+{% endblock %}

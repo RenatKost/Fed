@@ -1,0 +1,38 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E2A3A"/>
+      <stop offset="100%" style="stop-color:#2A3441"/>
+    </linearGradient>
+    <linearGradient id="helmetGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A90E2"/>
+      <stop offset="100%" style="stop-color:#357ABD"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="200" height="200" rx="100" fill="url(#bgGradient)"/>
+  
+  <!-- Pilot silhouette -->
+  <g transform="translate(100, 100)">
+    <!-- Head/Helmet -->
+    <circle cx="0" cy="-20" r="35" fill="url(#helmetGradient)" opacity="0.8"/>
+    
+    <!-- Visor -->
+    <ellipse cx="0" cy="-25" rx="25" ry="15" fill="#00D4AA" opacity="0.6"/>
+    
+    <!-- Communication equipment -->
+    <rect x="-40" y="-30" width="8" height="20" rx="4" fill="#00D4AA" opacity="0.8"/>
+    <rect x="32" y="-30" width="8" height="20" rx="4" fill="#00D4AA" opacity="0.8"/>
+    
+    <!-- Shoulders -->
+    <ellipse cx="0" cy="20" rx="45" ry="25" fill="#4A90E2" opacity="0.6"/>
+    
+    <!-- Badge/insignia -->
+    <circle cx="0" cy="15" r="8" fill="#00D4AA" opacity="0.9"/>
+    <polygon points="0,-5 3,3 -3,3" transform="translate(0, 15)" fill="#0D1421"/>
+  </g>
+  
+  <!-- Border -->
+  <circle cx="100" cy="100" r="98" fill="none" stroke="#2A3441" stroke-width="4"/>
+</svg>

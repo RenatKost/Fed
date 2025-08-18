@@ -1,0 +1,578 @@
+{% extends "base.html" %}
+
+{% block title %}Головна - Всеукраїнська федерація військових пілотів БПЛА{% endblock %}
+
+{% block content %}
+<!-- Hero секція -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Всеукраїнська федерація військових пілотів БПЛА</h1>
+            <p>Об'єднуємо найкращих пілотів безпілотних літальних апаратів України для захисту нашої Батьківщини</p>
+            <a href="#rating-info" class="btn btn-primary smooth-scroll">Полетіли!</a>
+        </div>
+    </div>
+</section>
+
+<!-- Секція про федерацію -->
+<section class="about-section">
+    <div class="container">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>Про федерацію</h2>
+                <p>
+                    Всеукраїнська федерація військових пілотів БПЛА - це офіційна організація, яка об'єднує найкращих операторів безпілотних літальних апаратів і виробників.
+                </p>
+                <p>
+                    Наша місія - підтримувати високі стандарти професійної підготовки, визнавати досягнення пілотів та сприяти розвитку безпілотної авіації в Україні.
+                </p>
+                <p>
+                    Федерація веде офіційний рейтинг пілотів, що базується на їхніх бойових досягненнях, професійних навичках та внеску в захист України.
+                </p>
+                <div class="mt-lg">
+                    <a href="http://linktr.ee/UFMUP" class="btn btn-secondary">Долучитись до федерації</a>
+                </div>
+            </div>
+            <div class="about-stats">
+                <div class="card">
+                    <h3>Наші досягнення</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">150+</div>
+                            <div class="stat-label">Активних пілотів</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">10+</div>
+                            <div class="stat-label">Розробників</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">1000+</div>
+                            <div class="stat-label">Виконаних місій</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Категорії пілотів -->
+<section class="categories-section">
+    <div class="container">
+        <h2 class="text-center mb-xl">Категорії співпраці</h2>
+        <div class="categories-grid">
+            <div class="card">
+                <h3>Пілоти</h3>
+                <p>Федерація об’єднує військових пілотів БПЛА, які щодня виконують завдання на фронті та в тилу. Ми створюємо справжнє бойове братерство, де кожен пілот отримує підтримку, можливості для розвитку та участь у спільних місіях.
+                    Федерація — це середовище довіри, сертифікації та професійного зростання.</p>
+                <div class="category-features">
+                    <div class="feature">✓ Участь у бойових і тренувальних операціях</div>
+                    <div class="feature">✓ Сертифікація та рейтинги пілотів</div>
+                    <div class="feature">✓ Доступ до спеціалізованих курсів</div>
+                    <div class="feature">✓ Тестування нових дронів та обладнання</div>
+                    <div class="feature">✓ Підтримка у соціалізації та ветеранських програмах</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Розробники</h3>
+                <p>Федерація стає містком між виробниками дронів, інженерами та бойовими підрозділами. Ми допомагаємо створювати техніку, перевірену на полі бою, та сприяємо розвитку українських defense-tech проєктів.
+                    Кожен розробник може не лише протестувати свою техніку, але й отримати зворотний зв’язок від бойових екіпажів.</p>
+                <div class="category-features">
+                    <div class="feature">✓ Тестування та сертифікація дронів у бойових умовах</div>
+                    <div class="feature">✓ Рейтинги та відгуки пілотів</div>
+                    <div class="feature">✓ Спільні інноваційні проєкти</div>
+                    <div class="feature">✓ Популяризація бренду через Федерацію</div>
+                    <div class="feature">✓ Підтримка у виході на міжнародні ринки</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Цивільні</h3>
+                <p>Федерація відкриває двері для цивільних, які хочуть стати частиною мілітарі-спільноти. Це простір для волонтерів, меценатів та громадян, які допомагають армії через підтримку, навчання та інформаційну роботу.
+                    Кожен цивільний може зробити свій внесок у перемогу — від донатів до організації заходів.</p>
+                <div class="category-features">
+                    <div class="feature">✓ Участь у волонтерських і соціальних програмах</div>
+                    <div class="feature">✓ Популяризація культури дронів серед молоді</div>
+                    <div class="feature">✓ Підтримка проєктів та зборів</div>
+                    <div class="feature">✓ Доступ до відкритих заходів та чемпіонатів</div>
+                    <div class="feature">✓ Можливість стати меценатом чи партнером</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Інструктори</h3>
+                <p>Федерація формує школу військових інструкторів із підготовки пілотів БПЛА. Досвідчені оператори передають знання новому поколінню, створюючи стандарти навчання й тактики.
+                    Інструктори стають наставниками, які формують майбутнє української армії та мілітарі-спільноти.</p>
+                <div class="category-features">
+                    <div class="feature">✓ Проведення курсів та тренувань</div>
+                    <div class="feature">✓ Розробка методик і протоколів</div>
+                    <div class="feature">✓ Підготовка мобільних екіпажів</div>
+                    <div class="feature">✓ Участь у національних та міжнародних змаганнях</div>
+                    <div class="feature">✓ Формування стандартів НАТО для підготовки</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Секція про рейтинг -->
+<section class="rating-info-section" id="rating-info">
+    <div class="container">
+        <div class="rating-info-content">
+            <div class="rating-header">
+                <h2>🏆 Рейтинг пілотів Федерації</h2>
+                <p class="rating-subtitle">Система рейтингу, яка відображає реальні результати роботи пілотів на полі бою</p>
+            </div>
+
+            <div class="rating-description">
+                <p>
+                    Федерація створила систему рейтингу, яка відображає реальні результати роботи пілотів на полі бою. 
+                    Кожен учасник може отримувати бали за свої дії та підніматися у загальній таблиці. 
+                    Це чесний і прозорий механізм, що мотивує пілотів до розвитку, а також формує національний реєстр найкращих пілотів.
+                </p>
+            </div>
+
+            <div class="rating-sections">
+                <!-- Як це працює -->
+                <div class="rating-card">
+                    <h3>⚙️ Як це працює</h3>
+                    <div class="rating-steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-text">Пілот надсилає відео своєї роботи у телеграм-бот Федерації</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-text">Адміністратори перевіряють матеріал та нараховують бали</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-text">Усі результати фіксуються в особистому профілі пілота</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-text">Щомісяця формується рейтинг розвідувальних та ударних пілотів</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Приклади нарахування балів -->
+                <div class="rating-card">
+                    <h3>🎯 Приклади нарахування балів</h3>
+                    <div class="points-list">
+                        <div class="points-item">
+                            <div class="points-value">1+</div>
+                            <div class="points-desc">Виявлення противника</div>
+                        </div>
+                        <div class="points-item">
+                            <div class="points-value">5+</div>
+                            <div class="points-desc">Знищення живої сили противника</div>
+                        </div>
+                        <div class="points-item">
+                            <div class="points-value">10+</div>
+                            <div class="points-desc">Знищення техніки</div>
+                        </div>
+                        <div class="points-item">
+                            <div class="points-value">15+</div>
+                            <div class="points-desc">Виконання спецзавдань (за рішенням адміністратора)</div>
+                        </div>
+                    </div>
+                    <p class="points-note">
+                        <em>(кількість балів може змінюватись залежно від складності завдання)</em>
+                    </p>
+                </div>
+
+                <!-- Що отримують пілоти -->
+                <div class="rating-card">
+                    <h3>🎁 Що отримують пілоти</h3>
+                    <div class="benefits-list">
+                        <div class="benefit">
+                            <div class="benefit-icon">🏆</div>
+                            <div class="benefit-text">Місце у відкритому рейтингу Федерації</div>
+                        </div>
+                        <div class="benefit">
+                            <div class="benefit-icon">🤝</div>
+                            <div class="benefit-text">Визнання серед побратимів та партнерів</div>
+                        </div>
+                        <div class="benefit">
+                            <div class="benefit-icon">🎖️</div>
+                            <div class="benefit-text">Призи та подарунки для топ-3 лідерів місяця</div>
+                        </div>
+                        <div class="benefit">
+                            <div class="benefit-icon">🚁</div>
+                            <div class="benefit-text">Додаткові можливості для участі у спільних проектах і навчаннях</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rating-cta">
+                <a href="{{ url_for('rating') }}" class="btn btn-primary">Переглянути рейтинг</a>
+                <a href="http://linktr.ee/UFMUP" class="btn btn-secondary">Долучитись до федерації</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: var(--font-3xl);
+    font-weight: 700;
+    color: var(--text-success);
+    margin-bottom: var(--spacing-sm);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: var(--font-sm);
+}
+
+.categories-section {
+    padding: var(--spacing-3xl) 0;
+    background: var(--primary-bg);
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--spacing-xl);
+}
+
+.category-features {
+    margin-top: var(--spacing-lg);
+}
+
+.feature {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+    padding-left: var(--spacing-md);
+}
+
+/* Стили для секции рейтинга */
+.rating-info-section {
+    padding: var(--spacing-3xl) 0;
+    background: var(--secondary-bg);
+    border-top: 1px solid var(--border-primary);
+}
+
+.rating-info-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.rating-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.rating-header h2 {
+    font-size: var(--font-4xl);
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.rating-subtitle {
+    font-size: var(--font-lg);
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.rating-description {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-xl);
+    background: var(--card-gradient);
+    border-radius: 16px;
+    border: 1px solid var(--border-primary);
+}
+
+.rating-description p {
+    font-size: var(--font-md);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.rating-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.rating-card {
+    background: var(--card-gradient);
+    border: 1px solid var(--border-primary);
+    border-radius: 16px;
+    padding: var(--spacing-xl);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.rating-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent-gradient);
+}
+
+.rating-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.rating-card h3 {
+    color: var(--text-accent);
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-xl);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* Стили для шагов */
+.rating-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--secondary-bg);
+    border-radius: 12px;
+    border-left: 3px solid var(--border-accent);
+    transition: all 0.3s ease;
+}
+
+.step:hover {
+    background: rgba(74, 144, 226, 0.1);
+    transform: translateX(4px);
+}
+
+.step-number {
+    background: var(--accent-gradient);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: var(--font-sm);
+    flex-shrink: 0;
+}
+
+.step-text {
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: var(--font-sm);
+}
+
+/* Стили для баллов */
+.points-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.points-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--secondary-bg);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.points-item:hover {
+    background: rgba(0, 212, 170, 0.1);
+    transform: translateX(4px);
+}
+
+.points-value {
+    background: var(--accent-gradient);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: var(--font-sm);
+    min-width: 50px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.points-desc {
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: var(--font-sm);
+}
+
+.points-note {
+    color: var(--text-tertiary);
+    font-size: var(--font-xs);
+    text-align: center;
+    margin-top: var(--spacing-md);
+}
+
+/* Стили для преимуществ */
+.benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.benefit {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--secondary-bg);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.benefit:hover {
+    background: rgba(74, 144, 226, 0.1);
+    transform: translateX(4px);
+}
+
+.benefit-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-gradient);
+    border-radius: 50%;
+}
+
+.benefit-text {
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: var(--font-sm);
+}
+
+/* CTA секция */
+.rating-cta {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: var(--card-gradient);
+    border-radius: 16px;
+    border: 1px solid var(--border-primary);
+    display: flex;
+    gap: var(--spacing-lg);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.rating-cta .btn {
+    min-width: 200px;
+}
+
+@media (max-width: 768px) {
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .rating-sections {
+        grid-template-columns: 1fr;
+    }
+    
+    .rating-header h2 {
+        font-size: var(--font-3xl);
+    }
+    
+    .rating-subtitle {
+        font-size: var(--font-md);
+    }
+    
+    .rating-cta {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .step {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .points-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .benefit {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* Плавный скролл */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Дополнительные стили для плавного скролла */
+.smooth-scroll {
+    transition: all 0.3s ease;
+}
+
+.smooth-scroll:hover {
+    transform: translateY(-2px);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработчик для плавного скролла
+    const smoothScrollLinks = document.querySelectorAll('.smooth-scroll');
+    
+    smoothScrollLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                const offsetTop = targetElement.offsetTop - 80; // Учитываем высоту навигации
+                
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

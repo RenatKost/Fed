@@ -11,7 +11,7 @@ from functools import wraps
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ukr-drone-federation-secure-key-2024')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///instance/pilots.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:////tmp/pilots.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Настройки безопасности сессии
@@ -368,6 +368,10 @@ def save_pilot_qr_code(pilot):
     return qr_filename
 
 if __name__ == '__main__':
+    # Создаем необходимые директории
+    os.makedirs('/tmp', exist_ok=True)
+    os.makedirs('static/qr_codes', exist_ok=True)
+    
     with app.app_context():
         db.create_all()
         

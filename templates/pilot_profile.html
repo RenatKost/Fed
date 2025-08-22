@@ -14,21 +14,47 @@
             <div class="pilot-info">
                 <h1>{{ pilot.callsign }}</h1>
                 <div class="pilot-meta">
-                    <span class="pilot-category category-{{ pilot.category }}">
-                        {% if pilot.category == 'strike' %}Ударний пілот{% else %}Розвідувальний пілот{% endif %}
-                    </span>
+                    {% if pilot.__tablename__ == 'participant' %}
+                        <!-- Новый участник -->
+                        {% set cat_info = pilot.get_category_info() %}
+                        <span class="pilot-category participant-{{ pilot.category }}" style="color: {{ cat_info.get('color', '#ffffff') }};">
+                            {{ cat_info.get('emoji', '') }} {{ cat_info.get('name', pilot.category) }}
+                            {% if pilot.subcategory %}
+                                <br><small>{{ pilot.get_subcategory_name() }}</small>
+                            {% endif %}
+                        </span>
+                    {% else %}
+                        <!-- Старый пилот -->
+                        <span class="pilot-category category-{{ pilot.category }}">
+                            {% if pilot.category == 'strike' %}🚁 Ударний пілот{% else %}👁️ Розвідувальний пілот{% endif %}
+                        </span>
+                    {% endif %}
                 </div>
                 <div class="pilot-meta">
                     <strong>Дата вступу:</strong> {{ pilot.join_date.strftime('%d.%m.%Y') }}
                 </div>
-                <div class="pilot-points">{{ pilot.points }} очок</div>
+                {% if pilot.__tablename__ == 'participant' %}
+                    {% if pilot.is_pilot() %}
+                    <div class="pilot-points">{{ pilot.points }} очок</div>
+                    {% endif %}
+                {% else %}
+                    <div class="pilot-points">{{ pilot.points }} очок</div>
+                {% endif %}
             </div>
             
             <!-- Компактный ID и QR код -->
-            <div class="pilot-id-card">
+            <div class="pilot-id-card {% if pilot.__tablename__ == 'participant' and not pilot.is_active %}inactive{% endif %}">
                 <div class="id-info">
-                    <div class="pilot-id-number">{{ pilot.pilot_id }}</div>
-                    <div class="id-status">ID карта активна</div>
+                    <div class="pilot-id-number">
+                        {% if pilot.__tablename__ == 'participant' %}{{ pilot.participant_id }}{% else %}{{ pilot.pilot_id }}{% endif %}
+                    </div>
+                    <div class="id-status {% if pilot.__tablename__ == 'participant' and not pilot.is_active %}inactive{% endif %}">
+                        {% if pilot.__tablename__ == 'participant' %}
+                            {% if pilot.is_active %}ID карта активна{% else %}ID карта деактивована{% endif %}
+                        {% else %}
+                            ID карта активна
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="qr-mini">
                     <iframe src="{{ url_for('generate_qr', qr_code=pilot.qr_code) }}" 
@@ -52,7 +78,13 @@
                             <div class="achievement-description">{{ achievement.description }}</div>
                             <div class="achievement-date">{{ achievement.date_awarded.strftime('%d.%m.%Y') }}</div>
                         </div>
-                        <div class="achievement-points">+{{ achievement.points }}</div>
+                        {% if pilot.__tablename__ == 'participant' %}
+                            {% if pilot.is_pilot() and achievement.points > 0 %}
+                            <div class="achievement-points">+{{ achievement.points }}</div>
+                            {% endif %}
+                        {% else %}
+                            <div class="achievement-points">+{{ achievement.points }}</div>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
@@ -63,39 +95,92 @@
             {% endif %}
         </div>
 
-        <!-- Статистика -->
-        <div class="pilot-stats">
-            <h2>Статистика</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value">{{ pilot.points }}</div>
-                    <div class="stat-label">Загальні очки</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">{{ achievements|length }}</div>
-                    <div class="stat-label">Досягнення</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">
-                        {% set rank = 1 %}
-                        {% if pilot.category == 'strike' %}
-                            {% for p in all_strike_pilots %}
-                                {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
-                            {% endfor %}
-                        {% else %}
-                            {% for p in all_recon_pilots %}
-                                {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
-                            {% endfor %}
-                        {% endif %}
+        <!-- Статистика (только для пилотов) -->
+        {% if pilot.__tablename__ == 'participant' %}
+            {% if pilot.is_pilot() %}
+            <div class="pilot-stats">
+                <h2>Статистика</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">{{ pilot.points }}</div>
+                        <div class="stat-label">Загальні очки</div>
                     </div>
-                    <div class="stat-label">Місце в категорії</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">{{ days_in_federation }}</div>
-                    <div class="stat-label">Днів у федерації</div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ achievements|length }}</div>
+                        <div class="stat-label">Досягнення</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">
+                            {% set rank = 1 %}
+                            {% if pilot.subcategory == 'pilot_strike' %}
+                                {% for p in all_strike_pilots %}
+                                    {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {% for p in all_recon_pilots %}
+                                    {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">Місце в категорії</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ days_in_federation }}</div>
+                        <div class="stat-label">Днів у федерації</div>
+                    </div>
                 </div>
             </div>
-        </div>
+            {% else %}
+            <!-- Для не-пилотов показываем только основную информацию -->
+            <div class="pilot-stats">
+                <h2>Інформація</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">{{ achievements|length }}</div>
+                        <div class="stat-label">Досягнення</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ days_in_federation }}</div>
+                        <div class="stat-label">Днів у федерації</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <!-- Для старых пилотов показываем полную статистику -->
+            <div class="pilot-stats">
+                <h2>Статистика</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">{{ pilot.points }}</div>
+                        <div class="stat-label">Загальні очки</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ achievements|length }}</div>
+                        <div class="stat-label">Досягнення</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">
+                            {% set rank = 1 %}
+                            {% if pilot.category == 'strike' %}
+                                {% for p in all_strike_pilots %}
+                                    {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {% for p in all_recon_pilots %}
+                                    {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">Місце в категорії</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ days_in_federation }}</div>
+                        <div class="stat-label">Днів у федерації</div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
         <!-- Навігація -->
         <div class="profile-navigation">
@@ -115,6 +200,13 @@
     justify-content: space-between;
     align-items: center;
     max-width: 400px;
+    transition: all 0.3s ease;
+}
+
+.pilot-id-card.inactive {
+    border-color: var(--text-danger);
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
 }
 
 .id-info {
@@ -134,6 +226,11 @@
     font-size: var(--font-sm);
     font-weight: 500;
     text-transform: uppercase;
+    transition: color 0.3s ease;
+}
+
+.id-status.inactive {
+    color: var(--text-danger);
 }
 
 .qr-mini {

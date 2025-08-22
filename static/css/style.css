@@ -1,5 +1,5 @@
 /* Основные стили на основе design.json */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap');
 
 :root {
   /* Цвета из design.json */
@@ -37,9 +37,9 @@
   --shadow-modal: 0 10px 40px rgba(0, 0, 0, 0.4);
   
   /* Типографика */
-  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-heading: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-primary: 'Comfortaa', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Comfortaa', sans-serif;
+  --font-mono: 'Comfortaa', monospace;
   
   /* Размеры шрифта */
   --font-xs: 12px;

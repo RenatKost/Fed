@@ -41,7 +41,11 @@
                     {% for pilot in all_pilots %}
                     <tr>
                         <td><span class="pilot-rank">#{{ loop.index }}</span></td>
-                        <td><span class="pilot-id-badge">{{ pilot.pilot_id }}</span></td>
+                        <td>
+                            <span class="pilot-id-badge">
+                                {% if pilot.__tablename__ == 'participant' %}{{ pilot.participant_id }}{% else %}{{ pilot.pilot_id }}{% endif %}
+                            </span>
+                        </td>
                         <td>
                             <div class="pilot-cell">
                                 <img src="{{ url_for('static', filename='images/' + pilot.photo_url) }}" 
@@ -52,9 +56,18 @@
                             </div>
                         </td>
                         <td>
-                            <span class="pilot-category category-{{ pilot.category }}">
-                                {% if pilot.category == 'strike' %}Ударний{% else %}Розвідувальний{% endif %}
-                            </span>
+                            {% if pilot.__tablename__ == 'participant' %}
+                                <span class="pilot-category category-{{ pilot.subcategory }}">
+                                    {% if pilot.subcategory == 'pilot_strike' %}Ударний
+                                    {% elif pilot.subcategory == 'pilot_reconnaissance' %}Розвідувальний
+                                    {% elif pilot.subcategory == 'pilot' %}Ударний (цивільний)
+                                    {% else %}Розвідувальний{% endif %}
+                                </span>
+                            {% else %}
+                                <span class="pilot-category category-{{ pilot.category }}">
+                                    {% if pilot.category == 'strike' %}Ударний{% else %}Розвідувальний{% endif %}
+                                </span>
+                            {% endif %}
                         </td>
                         <td>{{ pilot.join_date.strftime('%d.%m.%Y') }}</td>
                         <td><strong>{{ pilot.points }}</strong></td>
@@ -84,7 +97,11 @@
                     {% for pilot in strike_pilots %}
                     <tr>
                         <td><span class="pilot-rank">#{{ loop.index }}</span></td>
-                        <td><span class="pilot-id-badge">{{ pilot.pilot_id }}</span></td>
+                        <td>
+                            <span class="pilot-id-badge">
+                                {% if pilot.__tablename__ == 'participant' %}{{ pilot.participant_id }}{% else %}{{ pilot.pilot_id }}{% endif %}
+                            </span>
+                        </td>
                         <td>
                             <div class="pilot-cell">
                                 <img src="{{ url_for('static', filename='images/' + pilot.photo_url) }}" 
@@ -122,7 +139,11 @@
                     {% for pilot in recon_pilots %}
                     <tr>
                         <td><span class="pilot-rank">#{{ loop.index }}</span></td>
-                        <td><span class="pilot-id-badge">{{ pilot.pilot_id }}</span></td>
+                        <td>
+                            <span class="pilot-id-badge">
+                                {% if pilot.__tablename__ == 'participant' %}{{ pilot.participant_id }}{% else %}{{ pilot.pilot_id }}{% endif %}
+                            </span>
+                        </td>
                         <td>
                             <div class="pilot-cell">
                                 <img src="{{ url_for('static', filename='images/' + pilot.photo_url) }}" 

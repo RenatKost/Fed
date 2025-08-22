@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Додати учасника - Адміністрування{% endblock %}
+
+{% block content %}
+<section style="padding: var(--spacing-xl) 0;">
+    <div class="container">
+        <div class="admin-header">
+            <h1>Додати нового учасника</h1>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">← Повернутися</a>
+        </div>
+
+        <div class="form-container">
+            <div class="card" style="max-width: 700px; margin: 0 auto;">
+                <form method="POST" action="{{ url_for('admin_add_participant') }}" id="participantForm">
+                    <div class="form-group">
+                        <label for="callsign" class="form-label">Позивний *</label>
+                        <input type="text" 
+                               id="callsign" 
+                               name="callsign" 
+                               class="form-input" 
+                               placeholder="Введіть позивний учасника"
+                               required>
+                        <small style="color: var(--text-tertiary);">Унікальний позивний учасника</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category" class="form-label">Категорія *</label>
+                        <select id="category" name="category" class="form-select" required onchange="updateSubcategories()">
+                            <option value="">Оберіть категорію</option>
+                            {% for cat_key, category in categories.items() %}
+                            <option value="{{ cat_key }}">{{ category.emoji }} {{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="subcategoryGroup" style="display: none;">
+                        <label for="subcategory" class="form-label">Підкатегорія *</label>
+                        <select id="subcategory" name="subcategory" class="form-select" required>
+                            <option value="">Оберіть підкатегорію</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="photo_url" class="form-label">Фото (URL або назва файлу)</label>
+                        <input type="text" 
+                               id="photo_url" 
+                               name="photo_url" 
+                               class="form-input" 
+                               placeholder="participant1.jpg або повний URL"
+                               value="default-pilot.svg">
+                        <small style="color: var(--text-tertiary);">
+                            Залишіть default-pilot.svg для стандартного фото або вкажіть назву файлу в папці /static/images/
+                        </small>
+                    </div>
+
+                    <div class="form-info">
+                        <h3>Додаткова інформація</h3>
+                        <ul>
+                            <li>Дата вступу буде встановлена автоматично (сьогоднішня дата)</li>
+                            <li>QR код профілю буде згенерований автоматично</li>
+                            <li>Початкова кількість очок: 0</li>
+                            <li>Ви зможете додати досягнення після створення профілю</li>
+                        </ul>
+                    </div>
+
+                    <div class="category-info" id="categoryInfo" style="display: none;">
+                        <h3>Опис категорії</h3>
+                        <div id="categoryDescription"></div>
+                    </div>
+
+                    <div style="margin-top: var(--spacing-xl);">
+                        <button type="submit" class="btn btn-success" style="width: 100%;">
+                            Створити учасника
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.form-container {
+    margin-top: var(--spacing-xl);
+}
+
+.form-info, .category-info {
+    background: var(--secondary-bg);
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+    margin: var(--spacing-lg) 0;
+}
+
+.form-info h3, .category-info h3 {
+    color: var(--text-accent);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-lg);
+}
+
+.form-info ul {
+    color: var(--text-secondary);
+    padding-left: var(--spacing-lg);
+}
+
+.form-info li {
+    margin-bottom: var(--spacing-xs);
+}
+
+.category-preview {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--card-gradient);
+    border-radius: 8px;
+    margin-top: var(--spacing-sm);
+}
+
+.category-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.subcategory-item {
+    background: var(--primary-bg);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 6px;
+    margin: var(--spacing-xs) 0;
+    border-left: 3px solid;
+}
+
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+    }
+}
+</style>
+
+<script>
+const categories = {{ categories | tojson }};
+
+function updateSubcategories() {
+    const categorySelect = document.getElementById('category');
+    const subcategoryGroup = document.getElementById('subcategoryGroup');
+    const subcategorySelect = document.getElementById('subcategory');
+    const categoryInfo = document.getElementById('categoryInfo');
+    const categoryDescription = document.getElementById('categoryDescription');
+    
+    const selectedCategory = categorySelect.value;
+    
+    if (selectedCategory && categories[selectedCategory]) {
+        // Показываем группу подкатегорий
+        subcategoryGroup.style.display = 'block';
+        
+        // Очищаем предыдущие опции
+        subcategorySelect.innerHTML = '<option value="">Оберіть підкатегорію</option>';
+        
+        // Добавляем подкатегории
+        const subcategories = categories[selectedCategory].subcategories;
+        for (const [key, name] of Object.entries(subcategories)) {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = name;
+            subcategorySelect.appendChild(option);
+        }
+        
+        // Показываем информацию о категории
+        categoryInfo.style.display = 'block';
+        const categoryData = categories[selectedCategory];
+        
+        categoryDescription.innerHTML = `
+            <div class="category-preview" style="border-left: 4px solid ${categoryData.color};">
+                <span style="font-size: 1.5em;">${categoryData.emoji}</span>
+                <div>
+                    <strong>${categoryData.name}</strong>
+                    <div style="margin-top: var(--spacing-xs);">
+                        ${Object.values(subcategories).map(name => 
+                            `<div class="subcategory-item" style="border-left-color: ${categoryData.color};">${name}</div>`
+                        ).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        // Скрываем группу подкатегорий и информацию
+        subcategoryGroup.style.display = 'none';
+        categoryInfo.style.display = 'none';
+        subcategorySelect.innerHTML = '<option value="">Оберіть підкатегорію</option>';
+    }
+}
+</script>
+{% endblock %}

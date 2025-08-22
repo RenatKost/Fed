@@ -8,130 +8,207 @@
         <div class="admin-header">
             <h1>Панель адміністратора</h1>
             <div class="admin-actions">
-                <a href="{{ url_for('admin_add_pilot') }}" class="btn btn-success">+ Додати пілота</a>
+                <a href="{{ url_for('admin_add_participant') }}" class="btn btn-success">+ Додати учасника</a>
                 <a href="{{ url_for('admin_logout') }}" class="btn btn-secondary">Вийти</a>
             </div>
         </div>
 
-        <!-- Статистика -->
+        <!-- Компактна статистика -->
         <div class="admin-stats">
-            <div class="stats-grid">
-                <div class="stat-card total-pilots">
-                    <div class="stat-icon">👥</div>
-                    <div class="stat-content">
-                        <div class="stat-value">{{ pilots|length }}</div>
-                        <div class="stat-label">Всього пілотів</div>
+            <div class="stats-overview">
+                <!-- Основна статистика -->
+                <div class="overview-card">
+                    <div class="overview-header">
+                        <h3>📊 Загальна статистика</h3>
                     </div>
-                    <div class="stat-decoration"></div>
+                    <div class="overview-content">
+                        <div class="stat-item">
+                            <span class="stat-number">{{ total_all }}</span>
+                            <span class="stat-text">Всього профілів</span>
+                        </div>
+                        <div class="stat-cards-row">
+                            <div class="card-stat active">
+                                <span class="card-number">{{ active_cards }}</span>
+                                <span class="card-text">Активних карт</span>
+                            </div>
+                            <div class="card-stat inactive">
+                                <span class="card-number">{{ inactive_cards }}</span>
+                                <span class="card-text">Деактивованих карт</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card strike-pilots">
-                    <div class="stat-icon">🚁</div>
-                    <div class="stat-content">
-                        <div class="stat-value">{{ pilots|selectattr('category', 'equalto', 'strike')|list|length }}</div>
-                        <div class="stat-label">Ударних пілотів</div>
+                
+                <!-- Детальна статистика по категоріям -->
+                <div class="categories-card">
+                    <div class="overview-header">
+                        <h3>🏷️ За категоріями</h3>
                     </div>
-                    <div class="stat-decoration"></div>
+                    <div class="categories-grid">
+                        {% for cat_key, category in categories.items() %}
+                        <div class="category-stat category-{{ cat_key }}">
+                            <div class="category-icon">{{ category.emoji }}</div>
+                            <div class="category-info">
+                                <div class="category-count">
+                                    {% if cat_key == 'military' %}{{ military_count }}
+                                    {% elif cat_key == 'civil' %}{{ civil_count }}
+                                    {% elif cat_key == 'deftech' %}{{ deftech_count }}
+                                    {% elif cat_key == 'donor_partner' %}{{ donor_partner_count }}
+                                    {% elif cat_key == 'media_education' %}{{ media_education_count }}
+                                    {% else %}0{% endif %}
+                                </div>
+                                <div class="category-name">{{ category.name }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div class="stat-card recon-pilots">
-                    <div class="stat-icon">👁️</div>
-                    <div class="stat-content">
-                        <div class="stat-value">{{ pilots|selectattr('category', 'equalto', 'reconnaissance')|list|length }}</div>
-                        <div class="stat-label">Розвідувальних пілотів</div>
+                
+                <!-- Статистика пілотів -->
+                <div class="pilots-card">
+                    <div class="overview-header">
+                        <h3>✈️ Пілоти</h3>
                     </div>
-                    <div class="stat-decoration"></div>
+                    <div class="pilots-breakdown">
+                        <div class="pilot-stat strike">
+                            
+                            <span class="pilot-count">{{ total_strike_pilots }}</span>
+                            <span class="pilot-label">Ударні</span>
+                        </div>
+                        <div class="pilot-stat recon">
+                            
+                            <span class="pilot-count">{{ total_recon_pilots }}</span>
+                            <span class="pilot-label">Розвідувальні</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Список пілотів -->
-        <div class="pilots-section">
-            <div class="pilots-header">
-                <h2>Керування пілотами</h2>
-                <div class="search-container">
-                    <input type="text" 
-                           id="pilotSearch" 
-                           placeholder="Пошук за ID або позивним..." 
-                           class="search-input">
-                    <div class="search-icon">🔍</div>
+        <!-- Список учасників -->
+        <div class="participants-section">
+            <div class="participants-header">
+                <h2>Керування учасниками</h2>
+                <div class="filter-controls">
+                    <select id="categoryFilter" class="form-select">
+                        <option value="">Всі категорії</option>
+                        {% for cat_key, category in categories.items() %}
+                        <option value="{{ cat_key }}">{{ category.emoji }} {{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="search-container">
+                        <input type="text" 
+                               id="participantSearch" 
+                               placeholder="Пошук за ID або позивним..." 
+                               class="search-input">
+                        <div class="search-icon">🔍</div>
+                    </div>
                 </div>
             </div>
-            <div class="pilots-grid" id="pilotsGrid">
-                <!-- Скрытые данные всех пилотов для поиска -->
-                <script id="allPilotsData" type="application/json">
-                {{ all_pilots | tojson }}
+            <div class="participants-grid" id="participantsGrid">
+                <!-- Скрытые данные всех участников для поиска -->
+                <script id="allMembersData" type="application/json">
+                {{ all_members | tojson }}
                 </script>
                 
-                <div class="pilots-container">
-                    {% for pilot in pilots %}
-                <div class="pilot-card" {% if loop.index > 3 %}style="display: none;"{% endif %}>
-                    <div class="pilot-card-header">
-                        <img src="{{ url_for('static', filename='images/' + pilot.photo_url) }}" 
-                             alt="{{ pilot.callsign }}" 
-                             class="pilot-card-avatar"
-                             onerror="this.src='/static/images/default-pilot.svg'">
-                        <div class="pilot-card-info">
-                            <h3>{{ pilot.callsign }}</h3>
-                            <div class="pilot-id-badge">{{ pilot.pilot_id }}</div>
-                            <div class="pilot-category category-{{ pilot.category }}">
-                                {% if pilot.category == 'strike' %}Ударний{% else %}Розвідувальний{% endif %}
+                <div class="participants-container">
+                    <!-- Новые участники -->
+                    {% for participant in participants %}
+                    <div class="participant-card participant-{{ participant.category }}" data-type="participant" data-category="{{ participant.category }}" {% if loop.index > 6 %}style="display: none;"{% endif %}>
+                        {% set cat_info = categories.get(participant.category, {}) %}
+                        <div class="participant-card-header">
+                            <img src="{{ url_for('static', filename='images/' + participant.photo_url) }}" 
+                                 alt="{{ participant.callsign }}" 
+                                 class="participant-card-avatar"
+                                 onerror="this.src='/static/images/default-pilot.svg'">
+                            <div class="participant-card-info">
+                                <h3>{{ participant.callsign }}</h3>
+                                <div class="participant-id-badge participant-id-{{ participant.category }}">
+                                    {{ participant.participant_id }}
+                                </div>
+                                <div class="participant-category participant-cat-{{ participant.category }}">
+                                    {{ cat_info.get('emoji', '') }} {{ cat_info.get('name', participant.category) }}
+                                    <br><small>{{ cat_info.get('subcategories', {}).get(participant.subcategory, participant.subcategory) }}</small>
+                                </div>
+                                {% if participant.is_pilot() %}
+                                <div class="participant-points">{{ participant.points }} очок</div>
+                                {% endif %}
                             </div>
-                            <div class="pilot-points">{{ pilot.points }} очок</div>
                         </div>
-                    </div>
                     
-                    <div class="pilot-card-details">
-                        <div class="detail-item">
-                            <strong>Дата вступу:</strong> {{ pilot.join_date.strftime('%d.%m.%Y') }}
-                        </div>
-                        <div class="detail-item">
-                            <strong>QR код:</strong> <small>{{ pilot.qr_code[:8] }}...</small>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Досягнень:</strong> {{ pilot.achievements|length }}
-                        </div>
-                    </div>
-
-                    <!-- Форма додавання досягнення -->
-                    <div class="achievement-form">
-                        <h4>Додати досягнення</h4>
-                        <form method="POST" action="{{ url_for('admin_add_achievement', pilot_id=pilot.id) }}">
-                            <div class="form-row">
-                                <input type="text" 
-                                       name="description" 
-                                       placeholder="Опис досягнення" 
-                                       class="form-input"
-                                       required>
-                                <input type="number" 
-                                       name="points" 
-                                       placeholder="Очки" 
-                                       class="form-input" 
-                                       min="1"
-                                       required>
-                                <button type="submit" class="btn btn-success btn-sm">+</button>
+                        <div class="participant-card-details">
+                            <div class="detail-item">
+                                <strong>Дата вступу:</strong> {{ participant.join_date.strftime('%d.%m.%Y') }}
                             </div>
-                        </form>
-                    </div>
+                            <div class="detail-item">
+                                <strong>QR код:</strong> <small>{{ participant.qr_code[:8] }}...</small>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Досягнень:</strong> {{ participant.achievements|length }}
+                            </div>
+                        </div>
 
-                    <div class="pilot-card-actions">
-                        <a href="{{ url_for('pilot_profile', qr_code=pilot.qr_code) }}" 
-                           class="btn btn-secondary">Профіль</a>
-                        <a href="{{ url_for('admin_edit_pilot', pilot_id=pilot.id) }}" 
-                           class="btn btn-primary">Редагувати</a>
-                        <form method="POST" 
-                              action="{{ url_for('admin_delete_pilot', pilot_id=pilot.id) }}" 
-                              style="display: inline;"
-                              onsubmit="return confirm('Ви впевнені, що хочете видалити цього пілота?')">
-                            <button type="submit" class="btn btn-danger">Видалити</button>
-                        </form>
+                        <!-- Форма додавання досягнення (только для пилотов) -->
+                        {% if participant.is_pilot() %}
+                        <div class="achievement-form">
+                            <h4>Додати досягнення</h4>
+                            <form method="POST" action="{{ url_for('admin_add_participant_achievement', participant_id=participant.id) }}">
+                                <div class="form-row">
+                                    <input type="text" 
+                                           name="description" 
+                                           placeholder="Опис досягнення" 
+                                           class="form-input"
+                                           required>
+                                    <input type="number" 
+                                           name="points" 
+                                           placeholder="Очки" 
+                                           class="form-input" 
+                                           min="1"
+                                           required>
+                                    <button type="submit" class="btn btn-success btn-sm">+</button>
+                                </div>
+                            </form>
+                        </div>
+                        {% else %}
+                        <!-- Форма додавання досягнення без очок -->
+                        <div class="achievement-form">
+                            <h4>Додати досягнення</h4>
+                            <form method="POST" action="{{ url_for('admin_add_participant_achievement', participant_id=participant.id) }}">
+                                <div class="form-row">
+                                    <input type="text" 
+                                           name="description" 
+                                           placeholder="Опис досягнення" 
+                                           class="form-input"
+                                           required>
+                                    <input type="hidden" name="points" value="0">
+                                    <button type="submit" class="btn btn-success btn-sm">Додати</button>
+                                </div>
+                            </form>
+                        </div>
+                        {% endif %}
+
+                        <div class="participant-card-actions">
+                            <a href="{{ url_for('pilot_profile', qr_code=participant.qr_code) }}" 
+                               class="btn btn-secondary">Профіль</a>
+                            <a href="{{ url_for('admin_edit_participant', participant_id=participant.id) }}" 
+                               class="btn btn-primary">Редагувати</a>
+                            <form method="POST" 
+                                  action="{{ url_for('admin_delete_participant', participant_id=participant.id) }}" 
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Ви впевнені, що хочете видалити цього учасника?')">
+                                <button type="submit" class="btn btn-danger">Видалити</button>
+                            </form>
+                        </div>
                     </div>
-                </div>
                     {% endfor %}
+                    
+
                 </div>
             </div>
 
-            {% if not pilots %}
-            <div class="no-pilots">
-                <p>Пілотів поки що немає. <a href="{{ url_for('admin_add_pilot') }}">Додайте першого</a></p>
+            {% if not participants and not pilots %}
+            <div class="no-participants">
+                <p>Учасників поки що немає. <a href="{{ url_for('admin_add_participant') }}">Додайте першого</a></p>
             </div>
             {% endif %}
         </div>
@@ -178,12 +255,192 @@
     margin: var(--spacing-xl) 0;
 }
 
-/* Красивые блоки статистики */
-.stats-grid {
+/* Компактная статистика */
+.stats-overview {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: 1fr 2fr 1fr;
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-2xl);
+}
+
+.overview-card, .categories-card, .pilots-card {
+    background: var(--card-gradient);
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-card);
+}
+
+.overview-header {
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-secondary);
+    padding-bottom: var(--spacing-sm);
+}
+
+.overview-header h3 {
+    color: var(--text-accent);
+    font-size: var(--font-lg);
+    margin: 0;
+}
+
+/* Основная статистика */
+.overview-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.stat-cards-row {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: space-between;
+}
+
+.card-stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-sm);
+    border-radius: 8px;
+    border: 2px solid;
+    background: var(--secondary-bg);
+}
+
+.card-stat.active {
+    border-color: var(--text-success);
+    background: rgba(40, 167, 69, 0.1);
+}
+
+.card-stat.inactive {
+    border-color: var(--text-danger);
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.card-number {
+    font-size: var(--font-lg);
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+}
+
+.card-stat.active .card-number {
+    color: var(--text-success);
+}
+
+.card-stat.inactive .card-number {
+    color: var(--text-danger);
+}
+
+.card-text {
+    font-size: var(--font-xs);
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: var(--font-3xl);
+    font-weight: 700;
+    color: var(--text-success);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-text {
+    color: var(--text-secondary);
+    font-size: var(--font-sm);
+    font-weight: 500;
+}
+
+/* Статистика по категориям */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.category-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border-radius: 8px;
+    background: var(--secondary-bg);
+    border-left: 3px solid;
+}
+
+.category-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.category-info {
+    flex: 1;
+}
+
+.category-count {
+    font-size: var(--font-lg);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.category-name {
+    font-size: var(--font-xs);
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Статистика пилотов */
+.pilots-breakdown {
+    display: flex;
+    gap: var(--spacing-lg);
+    justify-content: space-around;
+}
+
+.pilot-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: var(--secondary-bg);
+    border-radius: 8px;
+    flex: 1;
+}
+
+.pilot-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.pilot-count {
+    font-size: var(--font-2xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.pilot-label {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+}
+
+.pilot-stat.strike {
+    border-top: 3px solid #FF6B6B;
+}
+
+.pilot-stat.recon {
+    border-top: 3px solid #00D4AA;
+}
+
+/* Красивые блоки статистики (старые - удаляем) */
+.stats-grid {
+    display: none;
 }
 
 .stat-card {
@@ -375,15 +632,15 @@
 }
 
 /* Цвета для разных типов активности */
-.activity-add_pilot {
+.activity-add_pilot, .activity-add_participant {
     border-left-color: var(--text-success);
 }
 
-.activity-delete_pilot {
+.activity-delete_pilot, .activity-delete_participant {
     border-left-color: var(--text-error);
 }
 
-.activity-edit_pilot {
+.activity-edit_pilot, .activity-edit_participant {
     border-left-color: var(--text-warning);
 }
 
@@ -397,6 +654,169 @@
     color: var(--text-tertiary);
 }
 
+.participants-section {
+    margin-top: var(--spacing-2xl);
+}
+
+/* Стили для участников */
+.participants-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.filter-controls {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-controls .form-select {
+    min-width: 200px;
+}
+
+.participants-grid .participants-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.participant-card {
+    background: var(--card-gradient);
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s ease;
+}
+
+.participant-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+.participant-card-header {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    border-radius: 8px;
+    padding: var(--spacing-sm);
+}
+
+.participant-card-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--border-primary);
+    object-fit: cover;
+}
+
+.participant-card-info h3 {
+    margin-bottom: var(--spacing-xs);
+    font-size: var(--font-lg);
+}
+
+.participant-id-badge {
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: var(--font-xs);
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    display: inline-block;
+}
+
+.participant-category {
+    font-size: var(--font-sm);
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+}
+
+.participant-points {
+    color: var(--text-success);
+    font-weight: 600;
+}
+
+.participant-card-details {
+    margin: var(--spacing-md) 0;
+}
+
+.participant-card-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.participant-card-actions .btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-sm);
+    flex: 1;
+}
+
+.pilot-card-old {
+    opacity: 0.8;
+    position: relative;
+}
+
+.pilot-card-old::before {
+    content: 'СТАРИЙ ФОРМАТ';
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    background: var(--text-warning);
+    color: var(--primary-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: var(--font-xs);
+    font-weight: 600;
+    z-index: 1;
+}
+
+/* Стили категорий */
+.category-military, .participant-military {
+    border-left: 4px solid #FF6B6B;
+}
+
+.category-civil, .participant-civil {
+    border-left: 4px solid #4A90E2;
+}
+
+.category-deftech, .participant-deftech {
+    border-left: 4px solid #00D4AA;
+}
+
+.category-donor_partner, .participant-donor_partner {
+    border-left: 4px solid #F5A623;
+}
+
+.category-media_education, .participant-media_education {
+    border-left: 4px solid #9B59B6;
+}
+
+.participant-id-military { background: #FF6B6B; }
+.participant-id-civil { background: #4A90E2; }
+.participant-id-deftech { background: #00D4AA; }
+.participant-id-donor_partner { background: #F5A623; }
+.participant-id-media_education { background: #9B59B6; }
+
+.participant-cat-military { color: #FF6B6B; }
+.participant-cat-civil { color: #4A90E2; }
+.participant-cat-deftech { color: #00D4AA; }
+.participant-cat-donor_partner { color: #F5A623; }
+.participant-cat-media_education { color: #9B59B6; }
+
+.pilot-card-old {
+    border-left: 4px solid #4A90E2;
+}
+
+/* Старые стили для совместимости */
 .pilots-section {
     margin-top: var(--spacing-2xl);
 }
@@ -561,6 +981,29 @@
         width: 100%;
     }
     
+    .participants-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .filter-controls .form-select {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .participants-grid .participants-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .participant-card-actions {
+        flex-direction: column;
+    }
+    
     .pilot-card-actions {
         flex-direction: column;
     }
@@ -572,57 +1015,81 @@
     .form-row .form-input:nth-child(2) {
         max-width: none;
     }
+    
+    .stats-overview {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pilots-breakdown {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('pilotSearch');
-    const searchContainer = document.querySelector('.search-container');
-    const pilotsGrid = document.getElementById('pilotsGrid');
+    const searchInput = document.getElementById('participantSearch');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const participantsGrid = document.getElementById('participantsGrid');
     
     let searchTimeout;
-    let searchResults = null;
-    let allPilots = [];
+    let allMembers = [];
     
-    // Получаем данные всех пилотов
+    // Получаем данные всех участников
     try {
-        const dataScript = document.getElementById('allPilotsData');
+        const dataScript = document.getElementById('allMembersData');
         if (dataScript) {
-            allPilots = JSON.parse(dataScript.textContent);
-            console.log('Загружено пилотов для поиска:', allPilots.length);
+            allMembers = JSON.parse(dataScript.textContent);
+            console.log('Загружено участников для поиска:', allMembers.length);
         }
     } catch (error) {
-        console.error('Ошибка загрузки данных пилотов:', error);
+        console.error('Ошибка загрузки данных участников:', error);
     }
 
-    searchInput.addEventListener('input', function() {
-        const query = this.value.trim();
-        
-        clearTimeout(searchTimeout);
-        
-        if (query.length < 1) {
-            resetPilotsGrid();
-            return;
-        }
-        
-        searchTimeout = setTimeout(() => {
-            searchPilots(query);
-        }, 300);
-    });
+    // Поиск
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            clearTimeout(searchTimeout);
+            
+            if (query.length < 1) {
+                applyFilters();
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                searchParticipants(query);
+            }, 300);
+        });
+    }
+    
+    // Фильтр по категориям
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', function() {
+            applyFilters();
+        });
+    }
 
 
 
-    function searchPilots(query) {
+    function searchParticipants(query) {
         const lowerQuery = query.toLowerCase();
-        const pilotCards = document.querySelectorAll('.pilot-card');
+        const participantCards = document.querySelectorAll('.participant-card');
         let visibleCards = 0;
         
-        pilotCards.forEach(card => {
-            const pilotName = card.querySelector('h3').textContent.toLowerCase();
-            const pilotId = card.querySelector('.pilot-id-badge').textContent.toLowerCase();
+        participantCards.forEach(card => {
+            const name = card.querySelector('h3').textContent.toLowerCase();
+            const idBadge = card.querySelector('.participant-id-badge');
+            const id = idBadge ? idBadge.textContent.toLowerCase() : '';
             
-            if (pilotName.includes(lowerQuery) || pilotId.includes(lowerQuery)) {
+            if (name.includes(lowerQuery) || id.includes(lowerQuery)) {
                 card.style.display = 'block';
                 visibleCards++;
             } else {
@@ -630,14 +1097,47 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Показываем сообщение если ничего не найдено
-        let noResultsMsg = document.querySelector('.no-pilots-found');
+        showNoResultsMessage(visibleCards);
+    }
+    
+    function applyFilters() {
+        const selectedCategory = categoryFilter ? categoryFilter.value : '';
+        const participantCards = document.querySelectorAll('.participant-card');
+        let visibleCards = 0;
+        
+        participantCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            const cardType = card.getAttribute('data-type');
+            
+            let shouldShow = false;
+            
+            if (!selectedCategory) {
+                // Показываем всех
+                shouldShow = true;
+            } else if (cardCategory === selectedCategory && cardType === 'participant') {
+                // Показываем участников выбранной категории
+                shouldShow = true;
+            }
+            
+            if (shouldShow) {
+                card.style.display = 'block';
+                visibleCards++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        showNoResultsMessage(visibleCards);
+    }
+    
+    function showNoResultsMessage(visibleCards) {
+        let noResultsMsg = document.querySelector('.no-participants-found');
         if (visibleCards === 0) {
             if (!noResultsMsg) {
                 noResultsMsg = document.createElement('div');
-                noResultsMsg.className = 'no-pilots-found';
-                noResultsMsg.textContent = 'Пілотів не знайдено';
-                document.querySelector('.pilots-container').appendChild(noResultsMsg);
+                noResultsMsg.className = 'no-participants-found';
+                noResultsMsg.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--text-tertiary);">Учасників не знайдено</p>';
+                document.querySelector('.participants-container').appendChild(noResultsMsg);
             }
             noResultsMsg.style.display = 'block';
         } else {
@@ -646,31 +1146,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-
-    function resetPilotsGrid() {
-        // Показываем все карточки
-        const pilotCards = document.querySelectorAll('.pilot-card');
-        pilotCards.forEach(card => {
-            card.style.display = 'block';
-        });
-        
-        // Скрываем сообщение "не найдено"
-        const noResultsMsg = document.querySelector('.no-pilots-found');
-        if (noResultsMsg) {
-            noResultsMsg.style.display = 'none';
-        }
-    }
     
-    // Обработка нажатия Enter
-    searchInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const query = this.value.trim();
-            if (query) {
-                searchPilots(query);
+    // Обработка нажатия Enter для поиска
+    if (searchInput) {
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const query = this.value.trim();
+                if (query) {
+                    searchParticipants(query);
+                }
             }
-        }
-    });
+        });
+    }
 });
 </script>
 {% endblock %}

@@ -630,7 +630,7 @@ def generate_qr(qr_code):
         if not os.path.exists(qr_filepath):
             # Создаем QR код
             qr = qrcode.QRCode(version=1, box_size=10, border=2)
-            qr.add_data(request.url_root + f'pilot/{qr_code}')
+            qr.add_data(f'https://ufmup.com/pilot/{qr_code}')
             qr.make(fit=True)
             
             img = qr.make_image(fill_color="black", back_color="white")
@@ -652,7 +652,7 @@ def generate_qr(qr_code):
     if not os.path.exists(qr_filepath):
         # Создаем QR код
         qr = qrcode.QRCode(version=1, box_size=10, border=2)
-        qr.add_data(request.url_root + f'pilot/{qr_code}')
+        qr.add_data(f'https://ufmup.com/pilot/{qr_code}')
         qr.make(fit=True)
         
         img = qr.make_image(fill_color="black", back_color="white")
@@ -670,8 +670,7 @@ def save_participant_qr_code(participant):
     
     # Создаем QR код
     qr = qrcode.QRCode(version=1, box_size=10, border=2)
-    base_url = os.environ.get('BASE_URL', 'http://localhost:5000')
-    qr.add_data(f'{base_url}/pilot/{participant.qr_code}')  # Оставляем /pilot/ для совместимости
+    qr.add_data(f'https://ufmup.com/pilot/{participant.qr_code}')  # Ссылка на правильный сайт
     qr.make(fit=True)
     
     img = qr.make_image(fill_color="black", back_color="white")
@@ -686,8 +685,7 @@ def save_pilot_qr_code(pilot):
     
     # Создаем QR код
     qr = qrcode.QRCode(version=1, box_size=10, border=2)
-    base_url = os.environ.get('BASE_URL', 'http://localhost:5000')
-    qr.add_data(f'{base_url}/pilot/{pilot.qr_code}')
+    qr.add_data(f'https://ufmup.com/pilot/{pilot.qr_code}')
     qr.make(fit=True)
     
     img = qr.make_image(fill_color="black", back_color="white")

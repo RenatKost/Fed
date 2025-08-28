@@ -35,16 +35,40 @@ def admin_required(f):
 # Функция для генерации следующего ID участника
 def generate_next_participant_id():
     try:
-        last_participant = Participant.query.order_by(Participant.id.desc()).first()
-        if last_participant and hasattr(last_participant, 'participant_id') and last_participant.participant_id:
-            # Извлекаем номер из UAV-0001
-            last_number = int(last_participant.participant_id.split('-')[1])
-            next_number = last_number + 1
+        # Получаем все ID из обеих таблиц
+        participant_ids = []
+        
+        # Новые участники
+        participants = Participant.query.all()
+        for p in participants:
+            if p.participant_id and p.participant_id.startswith('UAV-'):
+                try:
+                    num = int(p.participant_id.split('-')[1])
+                    participant_ids.append(num)
+                except:
+                    continue
+        
+        # Старые пилоты
+        pilots = Pilot.query.all()
+        for p in pilots:
+            if p.pilot_id and p.pilot_id.startswith('UAV-'):
+                try:
+                    num = int(p.pilot_id.split('-')[1])
+                    participant_ids.append(num)
+                except:
+                    continue
+        
+        # Находим следующий доступный номер
+        if participant_ids:
+            next_number = max(participant_ids) + 1
         else:
             next_number = 1
-    except:
-        # Если таблица еще не создана или ошибка
+            
+    except Exception as e:
+        print(f"Ошибка при генерации ID: {e}")
+        # Если ошибка, начинаем с 1
         next_number = 1
+        
     return f"UAV-{next_number:04d}"
 
 # Для обратной совместимости
@@ -465,10 +489,31 @@ def admin_add_participant():
         category = request.form['category']
         subcategory = request.form['subcategory']
         photo_url = request.form.get('photo_url', 'default-pilot.svg')
+        custom_id = request.form.get('custom_id', '').strip()
         
-        # Генерируем уникальный QR код и ID участника
+        # Проверяем кастомный ID или генерируем автоматически
+        if custom_id:
+            # Валидируем формат
+            import re
+            if not re.match(r'^UAV-\d{4}$', custom_id):
+                flash('Неправильний формат ID! Використовуйте формат UAV-XXXX (наприклад, UAV-0012)', 'error')
+                return render_template('admin_add_participant.html', categories=CATEGORIES)
+            
+            # Проверяем уникальность
+            existing_participant = Participant.query.filter_by(participant_id=custom_id).first()
+            existing_pilot = Pilot.query.filter_by(pilot_id=custom_id).first()
+            
+            if existing_participant or existing_pilot:
+                flash(f'ID {custom_id} вже зайнятий! Оберіть інший номер або залишіть поле порожнім для автогенерації.', 'error')
+                return render_template('admin_add_participant.html', categories=CATEGORIES)
+            
+            participant_id = custom_id
+        else:
+            # Автогенерация ID
+            participant_id = generate_next_participant_id()
+        
+        # Генерируем уникальный QR код
         qr_code = str(uuid.uuid4())
-        participant_id = generate_next_participant_id()
         
         participant = Participant(
             participant_id=participant_id,
@@ -479,28 +524,57 @@ def admin_add_participant():
             qr_code=qr_code
         )
         
-        db.session.add(participant)
-        db.session.commit()
-        
-        # Сохраняем QR код в файл
-        save_participant_qr_code(participant)
-        
-        # Логируем активность
-        category_info = CATEGORIES.get(category, {})
-        subcategory_name = category_info.get('subcategories', {}).get(subcategory, subcategory)
-        
-        log_admin_activity(
-            action_type='add_participant',
-            participant=participant,
-            description=f'Додано нового учасника {callsign} ({participant_id}) в категорії {category_info.get("name", category)} - {subcategory_name}'
-        )
-        
-        flash(f'Учасник {callsign} (ID: {participant_id}) успішно додано')
-        return redirect(url_for('admin_dashboard'))
+        try:
+            db.session.add(participant)
+            db.session.commit()
+            
+            # Сохраняем QR код в файл
+            save_participant_qr_code(participant)
+            
+            # Логируем активность
+            category_info = CATEGORIES.get(category, {})
+            subcategory_name = category_info.get('subcategories', {}).get(subcategory, subcategory)
+            
+            id_method = "вручну" if custom_id else "автоматично"
+            log_admin_activity(
+                action_type='add_participant',
+                participant=participant,
+                description=f'Додано нового учасника {callsign} ({participant_id}, ID призначено {id_method}) в категорії {category_info.get("name", category)} - {subcategory_name}'
+            )
+            
+            flash(f'Учасник {callsign} (ID: {participant_id}) успішно додано')
+            return redirect(url_for('admin_dashboard'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Помилка при додаванні учасника: {str(e)}', 'error')
+            return render_template('admin_add_participant.html', categories=CATEGORIES)
     
     return render_template('admin_add_participant.html', categories=CATEGORIES)
 
-
+@app.route('/admin/check_participant_id')
+@admin_required
+def check_participant_id():
+    """AJAX эндпоинт для проверки доступности ID участника"""
+    participant_id = request.args.get('id', '').strip()
+    
+    if not participant_id:
+        return jsonify({'available': True, 'message': ''})
+    
+    # Валидируем формат
+    import re
+    if not re.match(r'^UAV-\d{4}$', participant_id):
+        return jsonify({'available': False, 'message': 'Неправильний формат! Використовуйте формат UAV-XXXX'})
+    
+    # Проверяем уникальность
+    existing_participant = Participant.query.filter_by(participant_id=participant_id).first()
+    existing_pilot = Pilot.query.filter_by(pilot_id=participant_id).first()
+    
+    if existing_participant or existing_pilot:
+        owner_name = existing_participant.callsign if existing_participant else existing_pilot.callsign
+        return jsonify({'available': False, 'message': f'ID {participant_id} вже зайнятий учасником "{owner_name}"'})
+    
+    return jsonify({'available': True, 'message': f'ID {participant_id} доступний'})
 
 @app.route('/admin/participant/<int:participant_id>/edit', methods=['GET', 'POST'])
 @admin_required

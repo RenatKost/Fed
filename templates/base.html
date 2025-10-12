@@ -4,36 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Всеукраїнська федерація військових пілотів БПЛА{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.webp') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/gooey-nav.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Gooey Navigation -->
-    <nav class="gooey-navbar">
-        <div class="gooey-nav-container">
-            <a href="{{ url_for('index') }}" class="gooey-logo">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" 
-                     alt="Федерація БПЛА" 
-                     class="gooey-logo-image">
+
+    <header class="header">
+        <div class="container">
+        <div class="header__box">
+            <a href="{{ url_for('index') }}" class="header__logo">
+                <img src="{{ url_for('static', filename='images/logo.webp') }}" alt="Федерація БПЛА" class="header__logo--img" width="85" height="78" loading="eager">
             </a>
+            <div class="header__menu">
+                <a href="{{ url_for('index') }}" class="header--index" data-page="home">Головна</a>
+                <a href="{{ url_for('rating') }}" class="header--rate" data-page="rating">Рейтинг</a>
+                <a href="https://linktr.ee/UFMUP" class="header--join" data-page="join">Долучитися</a>
+            </div>
             
-            <div class="gooey-nav">
-                <div class="nav-indicator"></div>
-                <a href="{{ url_for('index') }}" class="nav-link" data-page="home">
-                    <span>Головна</span>
-                </a>
-                <a href="{{ url_for('rating') }}" class="nav-link" data-page="rating">
-                    <span>Рейтинг</span>
-                </a>
-                <a href="#" class="nav-link" data-page="join" onclick="openJoinModal()">
-                    <span>Вступити</span>
-                </a>
+            <div class="header--burger mobile">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M1 0.25C0.585786 0.25 0.25 0.585786 0.25 1C0.25 1.41421 0.585786 1.75 1 1.75H15C15.4142 1.75 15.75 1.41421 15.75 1C15.75 0.585786 15.4142 0.25 15 0.25H1Z" fill="white"/><path d="M1 6.25C0.585786 6.25 0.25 6.58579 0.25 7C0.25 7.41421 0.585786 7.75 1 7.75H15C15.4142 7.75 15.75 7.41421 15.75 7C15.75 6.58579 15.4142 6.25 15 6.25H1Z" fill="white"/><path d="M1 12.25C0.585786 12.25 0.25 12.5858 0.25 13C0.25 13.4142 0.585786 13.75 1 13.75H15C15.4142 13.75 15.75 13.4142 15.75 13C15.75 12.5858 15.4142 12.25 15 12.25H1Z" fill="white"/></svg>
             </div>
         </div>
-    </nav>
+        </div>
+
+    </header>
 
     <main>
         {% with messages = get_flashed_messages() %}
@@ -49,55 +43,10 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Скрытая ссылка для админа -->
-    <footer style="text-align: center; padding: 20px; opacity: 0.3;">
-        <a href="{{ url_for('admin_login') }}" style="color: var(--text-secondary); text-decoration: none; font-size: 12px;">©</a>
-    </footer>
+   
 
-    <!-- Модальное окно для вступления -->
-    <div id="joinModal" class="modal" onclick="closeJoinModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="modal-close" onclick="closeJoinModal()">&times;</span>
-            <h2>Вступ до федерації</h2>
-            <p>Для вступу у "Всеукраїнську федерацію військових пілотів БПЛА" і отримання посвідчення члена федерації треба заповнити анкету на вступ і дочекатись підтвердження.</p>
-            <div class="modal-actions">
-                <a href="http://linktr.ee/UFMUP" target="_blank" class="btn btn-primary join-btn">
-                    Заповнити анкету
-                </a>
-            </div>
-        </div>
-    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
-    <script src="{{ url_for('static', filename='js/gooey-nav.js') }}"></script>
-    <script>
-        // Простые интерактивные элементы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Анимация появления элементов
-            const elements = document.querySelectorAll('.card, .pilot-card');
-            elements.forEach((el, index) => {
-                el.style.animationDelay = `${index * 0.1}s`;
-                el.classList.add('fade-in');
-            });
-        });
-
-        // Функции для модального окна
-        function openJoinModal() {
-            document.getElementById('joinModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeJoinModal() {
-            document.getElementById('joinModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // Закрытие модального окна по Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeJoinModal();
-            }
-        });
-    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

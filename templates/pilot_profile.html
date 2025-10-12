@@ -97,7 +97,7 @@
                     {% endfor %}
                 </div>
             {% else %}
-                <div class="profile__achive__no">
+                <div class="profile__achive__no profile--open-box">
                     <p class="profile__achive__no--p">Поки що <br> досягнення відсутні</p>
                 </div>
             {% endif %}
@@ -200,9 +200,21 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="21" viewBox="0 0 30 21" fill="none"><path d="M9.2131 3.05448C9.70343 2.56851 9.70696 1.77706 9.22099 1.28674C8.73502 0.796407 7.94357 0.792876 7.45324 1.27885L4.46202 4.2435C3.3354 5.36006 2.41461 6.27265 1.7616 7.08576C1.08255 7.93131 0.590996 8.78954 0.459686 9.81973C0.40211 10.2714 0.40211 10.7286 0.459686 11.1803C0.590995 12.2105 1.08255 13.0687 1.7616 13.9142C2.41461 14.7274 3.3354 15.6399 4.46203 16.7565L7.45324 19.7212C7.94357 20.2071 8.73502 20.2036 9.22099 19.7133C9.70696 19.2229 9.70343 18.4315 9.2131 17.9455L6.27482 15.0333C5.08233 13.8514 4.26433 13.038 3.71083 12.3488C3.53095 12.1248 3.3906 11.9277 3.28164 11.75H28.3332C29.0235 11.75 29.5832 11.1904 29.5832 10.5C29.5832 9.80964 29.0235 9.25 28.3332 9.25H3.28164C3.3906 9.07234 3.53095 8.87516 3.71083 8.65118C4.26433 7.96196 5.08233 7.14856 6.27482 5.96667L9.2131 3.05448Z" fill="#6D6D6D"/></svg>
           </div>
           <p class="profile__person--name">{{ pilot.callsign }}</p>
-          <div class="profile__person--id {% if pilot.__tablename__ != 'participant' %} active {% endif %}">
-            {% if pilot.__tablename__ == 'participant' %}{{ pilot.participant_id }}{% else %}{{ pilot.pilot_id }}{% endif %}
+          {% if pilot.__tablename__ == 'participant' %}
+            {% if pilot.is_active %}
+              <div class="profile__person--id active">
+                {{ pilot.participant_id }}
+              </div>
+            {% else %}
+              <div class="profile__person--id">
+              {{ pilot.participant_id }}
             </div>
+            {% endif %}
+          {% else %}
+            <div class="profile__person--id active">
+              {{ pilot.pilot_id }}
+            </div>
+          {% endif %}
           <p class="profile__person--p">
             {% if pilot.__tablename__ == 'participant' %}
                 {% if pilot.is_active %}ID карта активна{% else %}ID карта деактивована{% endif %}
@@ -211,14 +223,6 @@
             {% endif %}
             </p>
             <img src="/static/qr_codes/{% if pilot.__tablename__ == 'participant' %}{{ pilot.participant_id }}{% else %}{{ pilot.pilot_id }}{% endif %}.png" alt="" class="profile__person--qr" width="280" height="280">
-            <div class="profile__person--qr">
-                <iframe src="{{ url_for('generate_qr', qr_code=pilot.qr_code) }}" 
-                    width="280" 
-                    height="280" 
-                    frameborder="0"
-                    scrolling="no">
-                </iframe>
-            </div>
         </div>
       </div>
     </section>

@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="https://freelancehunt.com/freelancer/Alexey__Shyprow.html ">
     <title>{% block title %}Всеукраїнська федерація військових пілотів БПЛА{% endblock %}</title>
     <link rel="icon" href="{{ url_for('static', filename='images/logo.webp') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% if request.endpoint and request.endpoint.startswith('admin') %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-styles.css') }}">
+    {% endif %}
 </head>
 <body>
 

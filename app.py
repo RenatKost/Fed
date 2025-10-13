@@ -345,6 +345,7 @@ def pilot_profile(qr_code):
     
     # Если не найден среди участников, ищем среди старых пилотов
     pilot = Pilot.query.filter_by(qr_code=qr_code).first_or_404()
+    
     achievements = Achievement.query.filter_by(pilot_id=pilot.id).order_by(Achievement.date_awarded.desc()).all()
     
     # Получаем списки для определения места в категории
@@ -699,18 +700,23 @@ def admin_logout():
 
 @app.route('/qr/<string:qr_code>')
 def generate_qr(qr_code):
+    from flask import send_file
+    
     # Пробуем найти среди новых участников
     participant = Participant.query.filter_by(qr_code=qr_code).first()
     if participant:
-        # Путь к файлу QR кода
+        # Путь к файлу QR кода - используем существующий qr_code
         qr_filename = f"{participant.participant_id}.png"
         qr_filepath = os.path.join('static', 'qr_codes', qr_filename)
         
-        # Проверяем, существует ли файл, если нет - создаем
+        # Проверяем, существует ли файл, если нет - создаем с существующим qr_code
         if not os.path.exists(qr_filepath):
-            # Создаем QR код
+            # Создаем директорию если её нет
+            os.makedirs('static/qr_codes', exist_ok=True)
+            
+            # Создаем QR код с существующим qr_code из БД
             qr = qrcode.QRCode(version=1, box_size=10, border=2)
-            qr.add_data(f'https://ufmup.com/pilot/{qr_code}')
+            qr.add_data(f'https://ufmup.com/pilot/{participant.qr_code}')
             qr.make(fit=True)
             
             img = qr.make_image(fill_color="black", back_color="white")
@@ -718,30 +724,37 @@ def generate_qr(qr_code):
             # Сохраняем в файл
             img.save(qr_filepath)
         
-        # Возвращаем HTML с изображением
-        return f'<img src="{url_for("static", filename=f"qr_codes/{qr_filename}")}" alt="QR Code for {participant.callsign}" style="width: 150px; height: 150px;">'
+        # Возвращаем файл изображения
+        return send_file(qr_filepath, mimetype='image/png')
     
     # Если не найден среди участников, ищем среди старых пилотов
-    pilot = Pilot.query.filter_by(qr_code=qr_code).first_or_404()
-    
-    # Путь к файлу QR кода
-    qr_filename = f"{pilot.pilot_id}.png"
-    qr_filepath = os.path.join('static', 'qr_codes', qr_filename)
-    
-    # Проверяем, существует ли файл, если нет - создаем
-    if not os.path.exists(qr_filepath):
-        # Создаем QR код
-        qr = qrcode.QRCode(version=1, box_size=10, border=2)
-        qr.add_data(f'https://ufmup.com/pilot/{qr_code}')
-        qr.make(fit=True)
+    pilot = Pilot.query.filter_by(qr_code=qr_code).first()
+    if pilot:
+        # Путь к файлу QR кода - используем существующий qr_code
+        qr_filename = f"{pilot.pilot_id}.png"
+        qr_filepath = os.path.join('static', 'qr_codes', qr_filename)
         
-        img = qr.make_image(fill_color="black", back_color="white")
+        # Проверяем, существует ли файл, если нет - создаем с существующим qr_code
+        if not os.path.exists(qr_filepath):
+            # Создаем директорию если её нет
+            os.makedirs('static/qr_codes', exist_ok=True)
+            
+            # Создаем QR код с существующим qr_code из БД
+            qr = qrcode.QRCode(version=1, box_size=10, border=2)
+            qr.add_data(f'https://ufmup.com/pilot/{pilot.qr_code}')
+            qr.make(fit=True)
+            
+            img = qr.make_image(fill_color="black", back_color="white")
+            
+            # Сохраняем в файл
+            img.save(qr_filepath)
         
-        # Сохраняем в файл
-        img.save(qr_filepath)
+        # Возвращаем файл изображения
+        return send_file(qr_filepath, mimetype='image/png')
     
-    # Возвращаем HTML с изображением
-    return f'<img src="{url_for("static", filename=f"qr_codes/{qr_filename}")}" alt="QR Code for {pilot.callsign}" style="width: 150px; height: 150px;">'
+    # Если не найден ни один участник, возвращаем ошибку 404
+    from flask import abort
+    abort(404)
 
 # Функция для сохранения QR кода участника
 def save_participant_qr_code(participant):
@@ -772,6 +785,24 @@ def save_pilot_qr_code(pilot):
     img.save(qr_filepath)
     
     return qr_filename
+
+def ensure_participant_has_qr_code(participant):
+    """Гарантирует, что у участника есть QR код. Для существующих участников сохраняет старый QR код."""
+    if not participant.qr_code:
+        # Генерируем новый UUID только если QR код отсутствует полностью
+        participant.qr_code = str(uuid.uuid4())
+        db.session.commit()
+        print(f"Сгенерирован новый QR код для участника {participant.callsign}: {participant.qr_code}")
+    return participant.qr_code
+
+def ensure_pilot_has_qr_code(pilot):
+    """Гарантирует, что у пилота есть QR код. Для существующих пилотов сохраняет старый QR код."""
+    if not pilot.qr_code:
+        # Генерируем новый UUID только если QR код отсутствует полностью
+        pilot.qr_code = str(uuid.uuid4())
+        db.session.commit()
+        print(f"Сгенерирован новый QR код для пилота {pilot.callsign}: {pilot.qr_code}")
+    return pilot.qr_code
 
 def migrate_database():
     """Обновляет схему базы данных для новых таблиц"""

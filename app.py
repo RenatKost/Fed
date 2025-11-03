@@ -275,6 +275,10 @@ def log_admin_activity(action_type, participant=None, pilot=None, description=No
 def index():
     return render_template('index.html')
 
+@app.route('/support')
+def support():
+    return render_template('support.html')
+
 @app.route('/rating')
 def rating():
     # Получаем только пилотов (для публичного рейтинга)

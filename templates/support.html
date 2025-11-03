@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Підтримка - Всеукраїнська федерація військових пілотів БПЛА{% endblock %}
+
+{% block content %}
+    <section class="profile">
+      <div class="container">
+        <div class="support__box">
+          <div class="profile__item support__intro">
+            <h1 class="support__title">Підтримка федерації</h1>
+            <p class="support__description">
+              Ваша підтримка допомагає розвивати федерацію та підтримувати пілотів БПЛА. 
+              Будь-яка сума важлива для нашої спільної мети.
+            </p>
+          </div>
+
+          <div class="profile__item support__section">
+            <h2 class="profile--title">Банківські рахунки</h2>
+            <div class="support__accounts">
+          
+
+              <div class="support__account-item">
+                <div class="support__account-header">
+                  <h3 class="support__account-title">IBAN рахунок</h3>
+                  <span class="support__account-type">UAH</span>
+                </div>
+                <div class="support__account-details">
+                  <div class="support__account-field">
+                    <span class="support__account-label">Банк:</span>
+                    <span class="support__account-value">АТ «УКРСИББАНК»</span>
+                  </div>
+                  <div class="support__account-field">
+                    <span class="support__account-label">ЄДРПОУ:</span>
+                    <span class="support__account-value">45474293</span>
+                  </div>
+                  <div class="support__account-field">
+                    <span class="support__account-label">IBAN:</span>
+                    <div class="support__account-value-wrapper">
+                      <span class="support__account-value" id="iban-1">UA603510050000026009879269254</span>
+                      <button class="support__copy-btn" onclick="copyToClipboard('iban-1', 'UA603510050000026009879269254')" title="Копіювати">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                          <rect x="6" y="6" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M3 11.25V4.5C3 3.67157 3.67157 3 4.5 3H11.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="support__account-field">
+                    <span class="support__account-label">Отримувач:</span>
+                    <span class="support__account-value">Всеукраїнська федерація військових пілотів БПЛА</span>
+                  </div>
+                  <div class="support__account-field">
+                    <span class="support__account-label">Призначення платежу:</span>
+                    <span class="support__account-value">Благодійний внесок \ Підтримка федерації</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile__item support__section">
+            <h2 class="profile--title">Криптовалютні гаманці</h2>
+            <div class="support__accounts">
+              <div class="support__account-item">
+                <div class="support__account-header">
+                  <h3 class="support__account-title">Bitcoin (BTC)</h3>
+                  <span class="support__account-type crypto">BTC</span>
+                </div>
+                <div class="support__account-details">
+                  <div class="support__account-field">
+                    <span class="support__account-label">Адреса:</span>
+                    <div class="support__account-value-wrapper">
+                      <span class="support__account-value support__crypto-address" id="btc-address">bc1qauq0rnmslk3v69gl7ymfltzylerfcvtzq0gpz3</span>
+                      <button class="support__copy-btn" onclick="copyToClipboard('btc-address', 'bc1qauq0rnmslk3v69gl7ymfltzylerfcvtzq0gpz3')" title="Копіювати">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                          <rect x="6" y="6" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M3 11.25V4.5C3 3.67157 3.67157 3 4.5 3H11.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="support__account-item">
+                <div class="support__account-header">
+                  <h3 class="support__account-title">Ethereum (ETH)</h3>
+                  <span class="support__account-type crypto">ETH</span>
+                </div>
+                <div class="support__account-details">
+                  <div class="support__account-field">
+                    <span class="support__account-label">Адреса:</span>
+                    <div class="support__account-value-wrapper">
+                      <span class="support__account-value support__crypto-address" id="eth-address">0xb4d107D8C18B9D139c4b5442A250051d2f11BD3b</span>
+                      <button class="support__copy-btn" onclick="copyToClipboard('eth-address', '0xb4d107D8C18B9D139c4b5442A250051d2f11BD3b')" title="Копіювати">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                          <rect x="6" y="6" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M3 11.25V4.5C3 3.67157 3.67157 3 4.5 3H11.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="support__account-item">
+                <div class="support__account-header">
+                  <h3 class="support__account-title">USDT (TRC20)</h3>
+                  <span class="support__account-type crypto">USDT</span>
+                </div>
+                <div class="support__account-details">
+                  <div class="support__account-field">
+                    <span class="support__account-label">Адреса:</span>
+                    <div class="support__account-value-wrapper">
+                      <span class="support__account-value support__crypto-address" id="usdt-address">TLYrWWMLV7N7rVJy27Kig7kTEwjjSSBSnR</span>
+                      <button class="support__copy-btn" onclick="copyToClipboard('usdt-address', 'TLYrWWMLV7N7rVJy27Kig7kTEwjjSSBSnR')" title="Копіювати">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                          <rect x="6" y="6" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M3 11.25V4.5C3 3.67157 3.67157 3 4.5 3H11.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="support__account-field">
+                    <span class="support__account-label">Мережа:</span>
+                    <span class="support__account-value">TRC20 (Tron)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile__item support__info">
+            <h2 class="profile--title">Інформація</h2>
+            <div class="support__info-content">
+              <p class="support__info-text">
+                Всі кошти, отримані через ці рахунки, йдуть на розвиток федерації, 
+                підтримку пілотів БПЛА та організацію заходів.
+              </p>
+              <p class="support__info-text">
+                Дякуємо за вашу підтримку! Разом ми зміцнюємо обороноздатність України.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      function copyToClipboard(elementId, text) {
+        navigator.clipboard.writeText(text).then(function() {
+          const valueElement = document.querySelector(`#${elementId}`);
+          const btn = valueElement.parentElement.querySelector('.support__copy-btn');
+          const originalHTML = btn.innerHTML;
+          btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M13.5 5.25L7.5 11.25L4.5 8.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+          btn.style.color = 'var(--additional-green)';
+          setTimeout(function() {
+            btn.innerHTML = originalHTML;
+            btn.style.color = '';
+          }, 2000);
+        }).catch(function(err) {
+          console.error('Помилка копіювання: ', err);
+        });
+      }
+    </script>
+{% endblock %}
+

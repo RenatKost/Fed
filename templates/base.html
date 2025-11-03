@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="author" content="https://freelancehunt.com/freelancer/Alexey__Shyprow.html ">
     <title>{% block title %}Всеукраїнська федерація військових пілотів БПЛА{% endblock %}</title>
     <link rel="icon" href="{{ url_for('static', filename='images/logo.webp') }}">
@@ -22,6 +22,7 @@
             <div class="header__menu">
                 <a href="{{ url_for('index') }}" class="header--index" data-page="home">Головна</a>
                 <a href="{{ url_for('rating') }}" class="header--rate" data-page="rating">Рейтинг</a>
+                <a href="{{ url_for('support') }}" class="header--support" data-page="support">Підтримка</a>
                 <a href="https://linktr.ee/UFMUP" class="header--join" data-page="join">Долучитися</a>
             </div>
             
@@ -47,7 +48,46 @@
         {% block content %}{% endblock %}
     </main>
 
-   
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__logo">
+                    <a href="{{ url_for('index') }}" class="footer__logo--link">
+                        <img src="{{ url_for('static', filename='images/logo.webp') }}" alt="Федерація БПЛА" class="footer__logo--img" width="60" height="55" loading="lazy">
+                    </a>
+                </div>
+                <nav class="footer__nav">
+                    <a href="{{ url_for('index') }}" class="footer__nav--link">Головна</a>
+                    <a href="{{ url_for('rating') }}" class="footer__nav--link">Рейтинг</a>
+                    <a href="{{ url_for('support') }}" class="footer__nav--link">Підтримка</a>
+                    <a href="https://linktr.ee/UFMUP" class="footer__nav--link" target="_blank" rel="noopener noreferrer">Долучитися</a>
+                </nav>
+                <div class="footer__social">
+                    <a href="https://www.instagram.com/ufmupua" class="footer__social--link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                    </a>
+                    <a href="http://t.me/UFMUP_UA" class="footer__social--link" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 2L11 13"></path>
+                            <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://www.facebook.com/UFMUP" class="footer__social--link" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                    </a>
+                </div>
+                <div class="footer__copyright">
+                    <p class="footer__copyright--text">© 2024 Всеукраїнська федерація військових пілотів БПЛА</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 

@@ -17,10 +17,26 @@ function header_humburger(){
   const btn  = document.querySelector(".header--burger");
   const menu = document.querySelector(".header__menu");
 
-  btn.addEventListener("click", function(){
+  if (!btn || !menu) return;
+
+  // Открытие/закрытие меню только по клику на бургер
+  btn.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
     btn.classList.toggle("active");
     menu.classList.toggle("active");
-  })
+  });
+
+  // Закрытие меню при клике вне его области
+  document.addEventListener('click', function(e) {
+    if (menu.classList.contains('active')) {
+      // Если клик был не на меню и не на бургер, закрываем меню
+      if (!menu.contains(e.target) && !btn.contains(e.target)) {
+        btn.classList.remove("active");
+        menu.classList.remove("active");
+      }
+    }
+  });
 }
 
 function section_hero(){

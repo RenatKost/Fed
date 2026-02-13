@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Редагувати учасника - Адміністрування{% endblock %}
+
+{% block content %}
+<section style="padding: var(--spacing-xl) 0;">
+    <div class="container">
+        <div class="admin-header">
+            <h1>Редагувати учасника: {{ participant.callsign }}</h1>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">← Повернутися</a>
+        </div>
+
+        <div class="form-container">
+            <div class="card" style="max-width: 700px; margin: 0 auto;">
+                <form method="POST" action="{{ url_for('admin_edit_participant', participant_id=participant.id) }}" id="participantForm">
+                    <div class="form-group">
+                        <label for="callsign" class="form-label">Позивний *</label>
+                        <input type="text" 
+                               id="callsign" 
+                               name="callsign" 
+                               class="form-input" 
+                               value="{{ participant.callsign }}"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category" class="form-label">Категорія *</label>
+                        <select id="category" name="category" class="form-select" required onchange="updateSubcategories()">
+                            <option value="">Оберіть категорію</option>
+                            {% for cat_key, category in categories.items() %}
+                            <option value="{{ cat_key }}" {% if participant.category == cat_key %}selected{% endif %}>
+                                {{ category.emoji }} {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="subcategoryGroup">
+                        <label for="subcategory" class="form-label">Підкатегорія *</label>
+                        <select id="subcategory" name="subcategory" class="form-select" required>
+                            <option value="">Оберіть підкатегорію</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="photo_url" class="form-label">Фото (URL або назва файлу)</label>
+                        <input type="text" 
+                               id="photo_url" 
+                               name="photo_url" 
+                               class="form-input" 
+                               value="{{ participant.photo_url }}">
+                        <small style="color: var(--text-tertiary);">
+                            Назва файлу в папці /static/images/ або повний URL
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="is_active" class="form-label">Статус ID карти</label>
+                        <div class="card-status-toggle">
+                            <label class="toggle-switch">
+                                <input type="checkbox" 
+                                       id="is_active" 
+                                       name="is_active" 
+                                       {% if participant.is_active %}checked{% endif %}>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label" id="statusLabel">
+                                {% if participant.is_active %}ID-картка активна{% else %}ID-картка деактивована{% endif %}
+                            </span>
+                        </div>
+                        <small style="color: var(--text-tertiary);">
+                            Деактивовані карти не працюють для доступу та позначаються як недійсні в профілі
+                        </small>
+                    </div>
+
+                    <div class="participant-current-info">
+                        <h3>Поточна інформація</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong>ID учасника:</strong> {{ participant.participant_id }}
+                            </div>
+                            <div class="info-item">
+                                <strong>Дата вступу:</strong> {{ participant.join_date.strftime('%d.%m.%Y') }}
+                            </div>
+                            {% if participant.is_pilot() %}
+                            <div class="info-item">
+                                <strong>Поточні очки:</strong> {{ participant.points }}
+                            </div>
+                            {% endif %}
+                            <div class="info-item">
+                                <strong>QR код:</strong> {{ participant.qr_code }}
+                            </div>
+                            <div class="info-item">
+                                <strong>Досягнень:</strong> {{ participant.achievements|length }}
+                            </div>
+                            <div class="info-item category-display">
+                                {% set cat_info = categories.get(participant.category, {}) %}
+                                <strong>Поточна категорія:</strong>
+                                <div class="current-category" style="color: {{ cat_info.get('color', '#ffffff') }};">
+                                    {{ cat_info.get('emoji', '') }} {{ cat_info.get('name', participant.category) }}
+                                    <br>
+                                    <small>{{ cat_info.get('subcategories', {}).get(participant.subcategory, participant.subcategory) }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="current-photo">
+                            <strong>Поточне фото:</strong>
+                            <div style="margin-top: var(--spacing-sm);">
+                                <img src="{{ url_for('static', filename='images/' + participant.photo_url) }}" 
+                                     alt="{{ participant.callsign }}" 
+                                     style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--border-primary); object-fit: cover;"
+                                     onerror="this.src='{{ url_for('static', filename='images/default-pilot.svg') }}'">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: var(--spacing-xl);">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            Зберегти зміни
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Список досягнень -->
+        <div class="achievements-section" style="margin-top: var(--spacing-2xl);">
+            <div class="card" style="max-width: 700px; margin: 0 auto;">
+                <h3>Досягнення учасника</h3>
+                {% if participant.achievements %}
+                    <div class="achievements-list">
+                        {% for achievement in participant.achievements %}
+                        <div class="achievement-item">
+                            <div class="achievement-info">
+                                <div class="achievement-description">{{ achievement.description }}</div>
+                                <div class="achievement-date">{{ achievement.date_awarded.strftime('%d.%m.%Y') }}</div>
+                            </div>
+                            <div class="achievement-points">+{{ achievement.points }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: var(--text-tertiary); text-align: center; padding: var(--spacing-lg);">
+                        У цього учасника ще немає досягнень
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+const categories = {{ categories | tojson }};
+const currentCategory = "{{ participant.category }}";
+const currentSubcategory = "{{ participant.subcategory }}";
+
+function updateSubcategories() {
+    const categorySelect = document.getElementById('category');
+    const subcategorySelect = document.getElementById('subcategory');
+    
+    const selectedCategory = categorySelect.value;
+    
+    if (selectedCategory && categories[selectedCategory]) {
+        // Очищаем предыдущие опции
+        subcategorySelect.innerHTML = '<option value="">Оберіть підкатегорію</option>';
+        
+        // Добавляем подкатегории
+        const subcategories = categories[selectedCategory].subcategories;
+        for (const [key, name] of Object.entries(subcategories)) {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = name;
+            // Выбираем текущую подкатегорию
+            if (key === currentSubcategory && selectedCategory === currentCategory) {
+                option.selected = true;
+            }
+            subcategorySelect.appendChild(option);
+        }
+    } else {
+        subcategorySelect.innerHTML = '<option value="">Оберіть підкатегорію</option>';
+    }
+}
+
+// Обновление текста переключателя статуса
+function updateStatusLabel() {
+    const checkbox = document.getElementById('is_active');
+    const label = document.getElementById('statusLabel');
+    
+    if (checkbox && label) {
+        if (checkbox.checked) {
+            label.textContent = 'ID-картка активна';
+            label.style.color = 'var(--text-success)';
+        } else {
+            label.textContent = 'ID-картка деактивована';
+            label.style.color = 'var(--text-danger)';
+        }
+    }
+}
+
+// Инициализируем подкатегории при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    updateSubcategories();
+    updateStatusLabel();
+    
+    const categorySelect = document.getElementById('category');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', updateSubcategories);
+    }
+    
+    const statusCheckbox = document.getElementById('is_active');
+    if (statusCheckbox) {
+        statusCheckbox.addEventListener('change', updateStatusLabel);
+    }
+});
+</script>
+{% endblock %}

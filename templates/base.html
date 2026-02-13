@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="author" content="https://freelancehunt.com/freelancer/Alexey__Shyprow.html ">
+    <title>{% block title %}Всеукраїнська федерація військових пілотів БПЛА{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.webp') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% if request.endpoint and request.endpoint.startswith('admin') %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-styles.css') }}">
+    {% endif %}
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+        <div class="header__box">
+            <a href="{{ url_for('index') }}" class="header__logo">
+                <img src="{{ url_for('static', filename='images/logo.webp') }}" alt="Федерація БПЛА" class="header__logo--img" width="85" height="78" loading="eager">
+            </a>
+            <div class="header__menu">
+                <a href="{{ url_for('index') }}" class="header--index" data-page="home">Головна</a>
+                <a href="{{ url_for('rating') }}" class="header--rate" data-page="rating">Рейтинг</a>
+                <a href="{{ url_for('support') }}" class="header--support" data-page="support">Підтримка</a>
+                <a href="https://linktr.ee/UFMUP" class="header--join" data-page="join">Долучитися</a>
+            </div>
+            
+            <div class="header--burger mobile">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M1 0.25C0.585786 0.25 0.25 0.585786 0.25 1C0.25 1.41421 0.585786 1.75 1 1.75H15C15.4142 1.75 15.75 1.41421 15.75 1C15.75 0.585786 15.4142 0.25 15 0.25H1Z" fill="white"/><path d="M1 6.25C0.585786 6.25 0.25 6.58579 0.25 7C0.25 7.41421 0.585786 7.75 1 7.75H15C15.4142 7.75 15.75 7.41421 15.75 7C15.75 6.58579 15.4142 6.25 15 6.25H1Z" fill="white"/><path d="M1 12.25C0.585786 12.25 0.25 12.5858 0.25 13C0.25 13.4142 0.585786 13.75 1 13.75H15C15.4142 13.75 15.75 13.4142 15.75 13C15.75 12.5858 15.4142 12.25 15 12.25H1Z" fill="white"/></svg>
+            </div>
+        </div>
+        </div>
+
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="container">
+                    {% for message in messages %}
+                        <div class="alert alert-success fade-in">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__logo">
+                    <a href="{{ url_for('index') }}" class="footer__logo--link">
+                        <img src="{{ url_for('static', filename='images/logo.webp') }}" alt="Федерація БПЛА" class="footer__logo--img" width="60" height="55" loading="lazy">
+                    </a>
+                </div>
+                <nav class="footer__nav">
+                    <a href="{{ url_for('index') }}" class="footer__nav--link">Головна</a>
+                    <a href="{{ url_for('rating') }}" class="footer__nav--link">Рейтинг</a>
+                    <a href="{{ url_for('support') }}" class="footer__nav--link">Підтримка</a>
+                    <a href="https://linktr.ee/UFMUP" class="footer__nav--link" target="_blank" rel="noopener noreferrer">Долучитися</a>
+                </nav>
+                <div class="footer__social">
+                    <a href="https://www.instagram.com/ufmupua" class="footer__social--link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                    </a>
+                    <a href="http://t.me/UFMUP_UA" class="footer__social--link" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 2L11 13"></path>
+                            <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://www.facebook.com/UFMUP" class="footer__social--link" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                    </a>
+                </div>
+                <div class="footer__copyright">
+                    <p class="footer__copyright--text">© 2024 Всеукраїнська федерація військових пілотів БПЛА</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

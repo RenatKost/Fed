@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}Рейтинг пілотів - Всеукраїнська федерація військових пілотів БПЛА{% endblock %}
+
+{% block content %}
+
+    <section class="rating">
+      <picture>
+        <source media="(max-width: 880px)" srcset="{{ url_for('static', filename='images/hero-rate--fone-mob.webp') }}">
+        <source media="(min-width: 881px)" srcset="{{ url_for('static', filename='images/hero-rate--fone.webp.webp') }}">
+        <img src="{{ url_for('static', filename='images/hero-rate--fone.webp.webp') }}" alt="" class="rating--fone fone" loading="eager">
+      </picture>
+      <div class="container">
+        <h1>Рейтинг пілотів БПЛА</h1>
+        <div class="rating__search">
+          <input type="text" id="ratingSearch" placeholder="Пошук за ID або позивним" class="rating__search--input rating-search-input">
+          <div class="rating__search--btn btn">
+            <svg class="btn--fone desktop" xmlns="http://www.w3.org/2000/svg" width="242" height="78" viewBox="0 0 242 78" fill="none"><path d="M22.6793 0H242V50.8912L219.405 78H0.075744L0 28.1164L22.6793 0Z" fill="white"/></svg>
+            <svg class="btn--fone mobile" xmlns="http://www.w3.org/2000/svg" width="343" height="65" viewBox="0 0 343 65" fill="none"><path d="M17.9711 0H343V38.2426L325.149 65H0.107356L0 26.7636L17.9711 0Z" fill="white"/></svg>
+            <div class="btn--content black">Шукати</div>
+          </div>
+        </div>
+        <nav class="rating__nav box">
+          <div class="rating__nav--item btn active" data-open-tab="0">
+            <svg class="btn--fone" xmlns="http://www.w3.org/2000/svg" width="380" height="86" viewBox="0 0 380 86" fill="none"><path d="M20.9917 0.5H380V63.5865L359.141 85.5H0.118937L0 22.4217L20.9917 0.5Z" fill="#020303"/></svg>
+            <div class="btn--content white">Загальний рейтинг</div>
+          </div>
+          <div class="rating__nav--item btn" data-open-tab="1">
+            <svg class="btn--fone" xmlns="http://www.w3.org/2000/svg" width="380" height="86" viewBox="0 0 380 86" fill="none"><path d="M20.9917 0.5H380V63.5865L359.141 85.5H0.118937L0 22.4217L20.9917 0.5Z" fill="#020303"/></svg>
+            <div class="btn--content white">Ударні пілоти</div>
+          </div>
+          <div class="rating__nav--item btn" data-open-tab="2">
+            <svg class="btn--fone" xmlns="http://www.w3.org/2000/svg" width="380" height="86" viewBox="0 0 380 86" fill="none"><path d="M20.9917 0.5H380V63.5865L359.141 85.5H0.118937L0 22.4217L20.9917 0.5Z" fill="#020303"/></svg>
+            <div class="btn--content white">Розвідувальні пілоти</div>
+          </div>
+        </nav>
+        <div class="rating__tabs">
+          <div class="rating__tabs__head box">
+            <div class="rating__tabs__col rating__tabs__col-1">#</div>
+            <div class="rating__tabs__col rating__tabs__col-2">ID</div>
+            <div class="rating__tabs__col rating__tabs__col-info">Інформація</div>
+            <div class="rating__tabs__col rating__tabs__col-3">Позивний</div>
+            <div class="rating__tabs__col rating__tabs__col-4">Категорія</div>
+            <div class="rating__tabs__col rating__tabs__col-5">Дата вступу</div>
+            <div class="rating__tabs__col rating__tabs__col-6">Очки</div>
+            <div class="rating__tabs__col rating__tabs__col-7">Дії</div>
+          </div>
+          
+          <!-- Загальний рейтинг -->
+          <div class="rating__tab active">
+            {% for pilot in all_pilots %}
+                <div class="rating__tab__item box">
+                <div class="rating__tabs__col rating__tabs__col-1">{{ loop.index }}</div>
+                <div class="rating__tabs__col rating__tabs__col-2">
+                    <div class="rating__tab__item--id">
+                        {% if pilot.__tablename__ == 'participant' %}{{ pilot.participant_id }}{% else %}{{ pilot.pilot_id }}{% endif %}
+                    </div>
+                </div>
+                <div class="rating__tabs__col rating__tabs__col-info">
+                    {{ pilot.callsign }}
+                    <div style="width: 100%;"></div>
+                    <div class="rating-info--item">
+                        {% if pilot.__tablename__ == 'participant' %}
+                            {% if pilot.subcategory == 'pilot_strike' %}Ударний
+                            {% elif pilot.subcategory == 'pilot_reconnaissance' %}Розвідувальний
+                            {% elif pilot.subcategory == 'pilot' %}Ударний (цивільний)
+                            {% else %}Розвідувальний{% endif %}
+                        {% else %}
+                            {% if pilot.category == 'strike' %}Ударний{% else %}Розвідувальний{% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="rating-info--item">{{ pilot.join_date.strftime('%d.%m.%Y') }}</div>
+                </div>
+                <div class="rating__tabs__col rating__tabs__col-3">{{ pilot.callsign }}</div>
+                <div class="rating__tabs__col rating__tabs__col-4">
+                    {% if pilot.__tablename__ == 'participant' %}
+                        {% if pilot.subcategory == 'pilot_strike' %}Ударний
+                        {% elif pilot.subcategory == 'pilot_reconnaissance' %}Розвідувальний
+                        {% elif pilot.subcategory == 'pilot' %}Ударний (цивільний)
+                        {% else %}Розвідувальний{% endif %}
+                    {% else %}
+                        {% if pilot.category == 'strike' %}Ударний{% else %}Розвідувальний{% endif %}
+                    {% endif %}
+                </div>
+                <div class="rating__tabs__col rating__tabs__col-5">{{ pilot.join_date.strftime('%d.%m.%Y') }}</div>
+                <div class="rating__tabs__col rating__tabs__col-6">{{ pilot.points }}</div>
+                <div class="rating__tabs__col rating__tabs__col-7">
+                    <a href="{{ url_for('pilot_profile', qr_code=pilot.qr_code) }}" class="rating__tab__item--a">Профіль</a>
+                </div>
+                </div>
+            {% endfor %}
+            
+          </div>
+
+          <!-- Ударні пілоти -->
+          <div class="rating__tab">
+            {% for pilot in strike_pilots %}
+                <div class="rating__tab__item box">
+                <div class="rating__tabs__col rating__tabs__col-1">{{ loop.index }}</div>
+                <div class="rating__tabs__col rating__tabs__col-2">
+                    <div class="rating__tab__item--id">
+                        {% if pilot.__tablename__ == 'participant' %}{{ pilot.participant_id }}{% else %}{{ pilot.pilot_id }}{% endif %}
+                    </div>
+                </div>
+                <div class="rating__tabs__col rating__tabs__col-info">
+                    {{ pilot.callsign }}
+                    <div style="width: 100%;"></div>
+                    <div class="rating-info--item">
+                        {% if pilot.__tablename__ == 'participant' %}
+                            {% if pilot.subcategory == 'pilot_strike' %}Ударний
+                            {% elif pilot.subcategory == 'pilot_reconnaissance' %}Розвідувальний
+                            {% elif pilot.subcategory == 'pilot' %}Ударний (цивільний)
+                            {% else %}Розвідувальний{% endif %}
+                        {% else %}
+                            {% if pilot.category == 'strike' %}Ударний{% else %}Розвідувальний{% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="rating-info--item">{{ pilot.join_date.strftime('%d.%m.%Y') }}</div>
+                </div>
+                <div class="rating__tabs__col rating__tabs__col-3">{{ pilot.callsign }}</div>
+                <div class="rating__tabs__col rating__tabs__col-4">
+                    {% if pilot.__tablename__ == 'participant' %}
+                        {% if pilot.subcategory == 'pilot_strike' %}Ударний
+                        {% elif pilot.subcategory == 'pilot_reconnaissance' %}Розвідувальний
+                        {% elif pilot.subcategory == 'pilot' %}Ударний (цивільний)
+                        {% else %}Розвідувальний{% endif %}
+                    {% else %}
+                        {% if pilot.category == 'strike' %}Ударний{% else %}Розвідувальний{% endif %}
+                    {% endif %}
+                </div>
+                <div class="rating__tabs__col rating__tabs__col-5">{{ pilot.join_date.strftime('%d.%m.%Y') }}</div>
+                <div class="rating__tabs__col rating__tabs__col-6">{{ pilot.points }}</div>
+                <div class="rating__tabs__col rating__tabs__col-7">
+                    <a href="{{ url_for('pilot_profile', qr_code=pilot.qr_code) }}" class="rating__tab__item--a">Профіль</a>
+                </div>
+                </div>
+            {% endfor %}
+            
+          </div>
+
+          <!-- Розвідувальні пілоти -->
+          <div class="rating__tab">
+            {% for pilot in recon_pilots %}
+                <div class="rating__tab__item box">
+                <div class="rating__tabs__col rating__tabs__col-1">{{ loop.index }}</div>
+                <div class="rating__tabs__col rating__tabs__col-2">
+                    <div class="rating__tab__item--id">
+                        {% if pilot.__tablename__ == 'participant' %}{{ pilot.participant_id }}{% else %}{{ pilot.pilot_id }}{% endif %}
+                    </div>
+                </div>
+                <div class="rating__tabs__col rating__tabs__col-info">
+                    {{ pilot.callsign }}
+                    <div style="width: 100%;"></div>
+                    <div class="rating-info--item">
+                        {% if pilot.__tablename__ == 'participant' %}
+                            {% if pilot.subcategory == 'pilot_strike' %}Ударний
+                            {% elif pilot.subcategory == 'pilot_reconnaissance' %}Розвідувальний
+                            {% elif pilot.subcategory == 'pilot' %}Ударний (цивільний)
+                            {% else %}Розвідувальний{% endif %}
+                        {% else %}
+                            {% if pilot.category == 'strike' %}Ударний{% else %}Розвідувальний{% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="rating-info--item">{{ pilot.join_date.strftime('%d.%m.%Y') }}</div>
+                </div>
+                <div class="rating__tabs__col rating__tabs__col-3">{{ pilot.callsign }}</div>
+                <div class="rating__tabs__col rating__tabs__col-4">
+                    {% if pilot.__tablename__ == 'participant' %}
+                        {% if pilot.subcategory == 'pilot_strike' %}Ударний
+                        {% elif pilot.subcategory == 'pilot_reconnaissance' %}Розвідувальний
+                        {% elif pilot.subcategory == 'pilot' %}Ударний (цивільний)
+                        {% else %}Розвідувальний{% endif %}
+                    {% else %}
+                        {% if pilot.category == 'strike' %}Ударний{% else %}Розвідувальний{% endif %}
+                    {% endif %}
+                </div>
+                <div class="rating__tabs__col rating__tabs__col-5">{{ pilot.join_date.strftime('%d.%m.%Y') }}</div>
+                <div class="rating__tabs__col rating__tabs__col-6">{{ pilot.points }}</div>
+                <div class="rating__tabs__col rating__tabs__col-7">
+                    <a href="{{ url_for('pilot_profile', qr_code=pilot.qr_code) }}" class="rating__tab__item--a">Профіль</a>
+                </div>
+                </div>
+            {% endfor %}
+            
+          </div>
+        </div>
+
+        <div class="rating--nothing">
+          Пілотів за запитом не знайдено
+        </div>
+      </div>
+      
+    </section>
+
+{% endblock %}

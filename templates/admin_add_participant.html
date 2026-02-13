@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block title %}Додати учасника - Адміністрування{% endblock %}
+
+{% block content %}
+<section style="padding: var(--spacing-xl) 0;">
+    <div class="container">
+        <div class="admin-header">
+            <h1>Додати нового учасника</h1>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">← Повернутися</a>
+        </div>
+
+        <div class="form-container">
+            <div class="card" style="max-width: 700px; margin: 0 auto;">
+                <form method="POST" action="{{ url_for('admin_add_participant') }}" id="participantForm">
+                    <div class="form-group">
+                        <label for="callsign" class="form-label">Позивний *</label>
+                        <input type="text" 
+                               id="callsign" 
+                               name="callsign" 
+                               class="form-input" 
+                               placeholder="Введіть позивний учасника"
+                               required>
+                        <small style="color: var(--text-tertiary);">Унікальний позивний учасника</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="custom_id" class="form-label">ID учасника (не обов'язково)</label>
+                        <input type="text" 
+                               id="custom_id" 
+                               name="custom_id" 
+                               class="form-input" 
+                               placeholder="UAV-0012 (залишіть порожнім для автогенерації)"
+                               pattern="UAV-\d{4}"
+                               maxlength="8">
+                        <small style="color: var(--text-tertiary);">
+                            Якщо не вказано, ID буде згенеровано автоматично (наступний доступний номер). 
+                            Формат: UAV-XXXX (де XXXX - 4-значний номер)
+                        </small>
+                        <div id="customIdError" style="color: var(--text-danger); font-size: var(--font-sm); margin-top: var(--spacing-xs); display: none;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category" class="form-label">Категорія *</label>
+                        <select id="category" name="category" class="form-select" required onchange="updateSubcategories()">
+                            <option value="">Оберіть категорію</option>
+                            {% for cat_key, category in categories.items() %}
+                            <option value="{{ cat_key }}">{{ category.emoji }} {{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="subcategoryGroup" style="display: none;">
+                        <label for="subcategory" class="form-label">Підкатегорія *</label>
+                        <select id="subcategory" name="subcategory" class="form-select" required>
+                            <option value="">Оберіть підкатегорію</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="photo_url" class="form-label">Фото (URL або назва файлу)</label>
+                        <input type="text" 
+                               id="photo_url" 
+                               name="photo_url" 
+                               class="form-input" 
+                               placeholder="participant1.jpg або повний URL"
+                               value="default-pilot.svg">
+                        <small style="color: var(--text-tertiary);">
+                            Залишіть default-pilot.svg для стандартного фото або вкажіть назву файлу в папці /static/images/
+                        </small>
+                    </div>
+
+                    <div class="form-info">
+                        <h3>Додаткова інформація</h3>
+                        <ul>
+                            <li><strong>ID учасника:</strong> Ви можете вказати власний ID у форматі UAV-XXXX або залишити поле порожнім для автоматичної генерації</li>
+                            <li>Система автоматично перевіряє унікальність вказаного ID</li>
+                            <li>Дата вступу буде встановлена автоматично (сьогоднішня дата)</li>
+                            <li>QR код профілю буде згенерований автоматично</li>
+                            <li>Початкова кількість очок: 0</li>
+                            <li>Ви зможете додати досягнення після створення профілю</li>
+                        </ul>
+                    </div>
+
+                    <div class="category-info" id="categoryInfo" style="display: none;">
+                        <h3>Опис категорії</h3>
+                        <div id="categoryDescription"></div>
+                    </div>
+
+                    <div style="margin-top: var(--spacing-xl);">
+                        <button type="submit" class="btn btn-success" style="width: 100%;">
+                            Створити учасника
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+const categories = {{ categories | tojson }};
+
+function updateSubcategories() {
+    const categorySelect = document.getElementById('category');
+    const subcategoryGroup = document.getElementById('subcategoryGroup');
+    const subcategorySelect = document.getElementById('subcategory');
+    const categoryInfo = document.getElementById('categoryInfo');
+    const categoryDescription = document.getElementById('categoryDescription');
+    
+    const selectedCategory = categorySelect.value;
+    
+    if (selectedCategory && categories[selectedCategory]) {
+        // Показываем группу подкатегорий
+        subcategoryGroup.style.display = 'block';
+        
+        // Очищаем предыдущие опции
+        subcategorySelect.innerHTML = '<option value="">Оберіть підкатегорію</option>';
+        
+        // Добавляем подкатегории
+        const subcategories = categories[selectedCategory].subcategories;
+        for (const [key, name] of Object.entries(subcategories)) {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = name;
+            subcategorySelect.appendChild(option);
+        }
+        
+        // Показываем информацию о категории
+        categoryInfo.style.display = 'block';
+        const categoryData = categories[selectedCategory];
+        
+        categoryDescription.innerHTML = `
+            <div class="category-preview" style="border-left: 4px solid ${categoryData.color};">
+                <span style="font-size: 1.5em;">${categoryData.emoji}</span>
+                <div>
+                    <strong>${categoryData.name}</strong>
+                    <div style="margin-top: var(--spacing-xs);">
+                        ${Object.values(subcategories).map(name => 
+                            `<div class="subcategory-item" style="border-left-color: ${categoryData.color};">${name}</div>`
+                        ).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        // Скрываем группу подкатегорий и информацию
+        subcategoryGroup.style.display = 'none';
+        categoryInfo.style.display = 'none';
+        subcategorySelect.innerHTML = '<option value="">Оберіть підкатегорію</option>';
+    }
+}
+
+// Валидация кастомного ID
+function validateCustomId() {
+    const customIdInput = document.getElementById('custom_id');
+    const errorDiv = document.getElementById('customIdError');
+    const value = customIdInput.value.trim();
+    
+    if (value === '') {
+        // Пустое поле - это OK, будет автогенерация
+        errorDiv.style.display = 'none';
+        customIdInput.style.borderColor = '';
+        return true;
+    }
+    
+    // Проверяем формат UAV-XXXX
+    const pattern = /^UAV-\d{4}$/;
+    if (!pattern.test(value)) {
+        errorDiv.textContent = 'Неправильний формат! Використовуйте формат UAV-XXXX (наприклад, UAV-0012)';
+        errorDiv.style.display = 'block';
+        customIdInput.style.borderColor = 'var(--text-danger)';
+        return false;
+    }
+    
+    // AJAX проверка доступности ID
+    checkIdAvailability(value);
+    return true;
+}
+
+// Проверка доступности ID через AJAX
+let checkTimeout;
+function checkIdAvailability(participantId) {
+    const customIdInput = document.getElementById('custom_id');
+    const errorDiv = document.getElementById('customIdError');
+    
+    // Очищаем предыдущий таймаут
+    if (checkTimeout) {
+        clearTimeout(checkTimeout);
+    }
+    
+    // Показываем индикатор проверки
+    errorDiv.textContent = 'Перевіряю доступність ID...';
+    errorDiv.style.display = 'block';
+    errorDiv.style.color = 'var(--text-secondary)';
+    customIdInput.style.borderColor = 'var(--border-primary)';
+    
+    // Делаем запрос с задержкой
+    checkTimeout = setTimeout(() => {
+        fetch(`/admin/check_participant_id?id=${encodeURIComponent(participantId)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.available) {
+                    errorDiv.textContent = data.message;
+                    errorDiv.style.color = 'var(--text-success)';
+                    customIdInput.style.borderColor = 'var(--text-success)';
+                } else {
+                    errorDiv.textContent = data.message;
+                    errorDiv.style.color = 'var(--text-danger)';
+                    customIdInput.style.borderColor = 'var(--text-danger)';
+                }
+                errorDiv.style.display = 'block';
+            })
+            .catch(error => {
+                errorDiv.textContent = 'Помилка перевірки доступності ID';
+                errorDiv.style.color = 'var(--text-danger)';
+                errorDiv.style.display = 'block';
+            });
+    }, 500); // Задержка 500мс для избежания множественных запросов
+}
+
+// Обработчик изменения custom_id поля
+document.addEventListener('DOMContentLoaded', function() {
+    const customIdInput = document.getElementById('custom_id');
+    if (customIdInput) {
+        // Объединенный обработчик для форматирования и валидации
+        customIdInput.addEventListener('input', function() {
+            let value = this.value.toUpperCase();
+            
+            // Автоматическое форматирование
+            // Если пользователь начинает вводить только цифры, добавляем UAV- автоматически
+            if (/^\d/.test(value)) {
+                value = 'UAV-' + value;
+            }
+            
+            // Удаляем все кроме UAV- и цифр
+            value = value.replace(/[^UAV\-0-9]/g, '');
+            
+            // Ограничиваем до 4 цифр после UAV-
+            const match = value.match(/^(UAV-)?(\d{0,4})/);
+            if (match) {
+                if (match[1]) {
+                    value = 'UAV-' + match[2];
+                } else if (match[2]) {
+                    value = 'UAV-' + match[2];
+                }
+            }
+            
+            this.value = value;
+            
+            // Валидация после форматирования
+            validateCustomId();
+        });
+        
+        customIdInput.addEventListener('blur', validateCustomId);
+    }
+    
+    // Валидация формы перед отправкой
+    const form = document.getElementById('participantForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const customIdInput = document.getElementById('custom_id');
+            const value = customIdInput.value.trim();
+            
+            // Если поле заполнено, проверяем валидность
+            if (value !== '') {
+                const pattern = /^UAV-\d{4}$/;
+                if (!pattern.test(value)) {
+                    e.preventDefault();
+                    alert('Будь ласка, перевірте формат ID! Використовуйте формат UAV-XXXX');
+                    return false;
+                }
+                
+                // Проверяем, не отображается ли ошибка о занятом ID
+                const errorDiv = document.getElementById('customIdError');
+                if (errorDiv.style.display === 'block' && 
+                    errorDiv.style.color === 'var(--text-danger)') {
+                    e.preventDefault();
+                    alert('Обраний ID недоступний! Оберіть інший номер або залишіть поле порожнім.');
+                    return false;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

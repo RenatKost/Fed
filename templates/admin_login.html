@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Вхід до адміністрування{% endblock %}
+
+{% block content %}
+<section style="padding: var(--spacing-3xl) 0; min-height: 80vh; display: flex; align-items: center; justify-content: center;">
+    <div class="container">
+        <div class="login-form-container">
+            <div class="card" style="max-width: 400px; margin: 0 auto;">
+                <h2 class="text-center mb-lg">Вхід до панелі адміністратора</h2>
+                
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-error">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="{{ url_for('admin_login') }}">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Логін</label>
+                        <input type="text" 
+                               id="username" 
+                               name="username" 
+                               class="form-input" 
+                               placeholder="Введіть логін"
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Пароль</label>
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               class="form-input" 
+                               placeholder="Введіть пароль"
+                               required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Увійти
+                    </button>
+                </form>
+                
+                <div style="margin-top: var(--spacing-lg); text-align: center; color: var(--text-tertiary); font-size: var(--font-sm);">
+                    <p>Доступ тільки для авторизованих адміністраторів</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

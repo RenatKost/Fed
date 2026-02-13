@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pilot.callsign }} - Профіль пілота{% endblock %}
+
+{% block content %}
+    <section class="profile">
+      <div class="container">
+        <div class="profile__box">
+          <div class="profile__item profile__left">
+            <a href="{{ url_for('rating') }}" class="profile--go-back">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="21" viewBox="0 0 30 21" fill="none"><path d="M9.2131 3.05448C9.70343 2.56851 9.70696 1.77706 9.22099 1.28674C8.73502 0.796407 7.94357 0.792876 7.45324 1.27885L4.46202 4.2435C3.3354 5.36006 2.41461 6.27265 1.7616 7.08576C1.08255 7.93131 0.590996 8.78954 0.459686 9.81973C0.40211 10.2714 0.40211 10.7286 0.459686 11.1803C0.590995 12.2105 1.08255 13.0687 1.7616 13.9142C2.41461 14.7274 3.3354 15.6399 4.46203 16.7565L7.45324 19.7212C7.94357 20.2071 8.73502 20.2036 9.22099 19.7133C9.70696 19.2229 9.70343 18.4315 9.2131 17.9455L6.27482 15.0333C5.08233 13.8514 4.26433 13.038 3.71083 12.3488C3.53095 12.1248 3.3906 11.9277 3.28164 11.75H28.3332C29.0235 11.75 29.5832 11.1904 29.5832 10.5C29.5832 9.80964 29.0235 9.25 28.3332 9.25H3.28164C3.3906 9.07234 3.53095 8.87516 3.71083 8.65118C4.26433 7.96196 5.08233 7.14856 6.27482 5.96667L9.2131 3.05448Z" fill="#6D6D6D"/></svg>
+              Повернутися
+            </a>
+            <div class="profile__person">
+              <p class="profile__person--name">{{ pilot.callsign }}</p>
+              
+              {% if pilot.__tablename__ == 'participant' %}
+                {% if pilot.is_active %}
+                  <div class="profile__person--id active">
+                    {{ pilot.participant_id }}
+                  </div>
+                {% else %}
+                  <div class="profile__person--id">
+                  {{ pilot.participant_id }}
+                </div>
+                {% endif %}
+              {% else %}
+                <div class="profile__person--id active">
+                  {{ pilot.pilot_id }}
+                </div>
+              {% endif %}
+              
+              <p class="profile__person--p">
+                {% if pilot.__tablename__ == 'participant' %}
+                    {% if pilot.is_active %}ID-картка активна{% else %}ID-картка деактивована{% endif %}
+                {% else %}
+                    ID-картка активна
+                {% endif %}
+              </p>
+                <img src="{{ url_for('generate_qr', qr_code=pilot.qr_code) }}" class="profile__person--qr desktop" width="240" height="240" onerror="this.src='/static/images/default-pilot.svg'">
+                
+              <div class="profile__open--btn mobile">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.25 1C12.25 0.585786 12.5858 0.25 13 0.25H14C17.1756 0.25 19.75 2.82436 19.75 6V7C19.75 7.41421 19.4142 7.75 19 7.75C18.5858 7.75 18.25 7.41421 18.25 7V6C18.25 3.65279 16.3472 1.75 14 1.75H13C12.5858 1.75 12.25 1.41421 12.25 1Z" fill="white"/><path d="M0.25 6C0.25 2.82436 2.82436 0.25 6 0.25H7C7.41421 0.25 7.75 0.585787 7.75 1C7.75 1.41421 7.41421 1.75 7 1.75H6C3.65279 1.75 1.75 3.65279 1.75 6V7C1.75 7.41421 1.41421 7.75 1 7.75C0.585787 7.75 0.25 7.41421 0.25 7V6Z" fill="white"/><path d="M3.25 6C3.25 4.48122 4.48122 3.25 6 3.25C7.51878 3.25 8.75 4.48122 8.75 6C8.75 7.51878 7.51878 8.75 6 8.75C4.48122 8.75 3.25 7.51878 3.25 6Z" fill="white"/><path d="M12.25 6C12.25 5.0335 13.0335 4.25 14 4.25C14.9665 4.25 15.75 5.0335 15.75 6C15.75 6.9665 14.9665 7.75 14 7.75C13.0335 7.75 12.25 6.9665 12.25 6Z" fill="white"/><path d="M11.25 14C11.25 12.4812 12.4812 11.25 14 11.25C15.5188 11.25 16.75 12.4812 16.75 14C16.75 15.5188 15.5188 16.75 14 16.75C12.4812 16.75 11.25 15.5188 11.25 14Z" fill="white"/><path d="M1 12.25C1.41421 12.25 1.75 12.5858 1.75 13V14C1.75 16.3472 3.65279 18.25 6 18.25H7C7.41422 18.25 7.75 18.5858 7.75 19C7.75 19.4142 7.41422 19.75 7 19.75H6C2.82436 19.75 0.25 17.1756 0.25 14V13C0.25 12.5858 0.585786 12.25 1 12.25Z" fill="white"/><path d="M19 12.25C19.4142 12.25 19.75 12.5858 19.75 13V14C19.75 17.1756 17.1756 19.75 14 19.75H13C12.5858 19.75 12.25 19.4142 12.25 19C12.25 18.5858 12.5858 18.25 13 18.25H14C16.3472 18.25 18.25 16.3472 18.25 14V13C18.25 12.5858 18.5858 12.25 19 12.25Z" fill="white"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="profile__item profile__top">
+            <div class="profile__top--item">
+                {% if pilot.__tablename__ == 'participant' %}
+                    <!-- Новый участник -->
+                    {% set cat_info = pilot.get_category_info() %}
+                    <span class="participant-{{ pilot.category }}" style="color: {{ cat_info.get('color', '#ffffff') }};">
+                        {{ cat_info.get('emoji', '') }} {{ cat_info.get('name', pilot.category) }}
+                        {% if pilot.subcategory %}
+                            <span>{{ pilot.get_subcategory_name() }}</span>
+                        {% endif %}
+                    </span>
+                {% else %}
+                    <!-- Старый пилот -->
+                    <span class="category-{{ pilot.category }}">
+                        MILITARY 
+                        {% if pilot.category == 'strike' %}<span>військові пілоти - ударні</span>{% else %}<span>Розвідувальний</span>{% endif %}
+                    </span>
+                {% endif %}
+              
+            </div>
+            <div class="profile__top--item">
+              Дата вступу: <span>{{ pilot.join_date.strftime('%d.%m.%Y') }}</span>
+            </div>
+            {% if pilot.__tablename__ == 'participant' %}
+                {% if pilot.is_pilot() %}
+                <div class="profile__top--item">{{ pilot.points }} очок</div>
+                {% endif %}
+            {% else %}
+                <div class="profile__top--item active">{{ pilot.points }} очок</div>
+            {% endif %}
+
+          </div>
+          <div class="profile__item profile__achive">
+            <p class="profile--title">Досягнення</p>
+            {% if achievements %}
+                <div class="profile__achive__box profile--open-box">
+                    {% for achievement in achievements %}
+                    <div class="profile__achive__item">
+                        <div class="achievement-info">
+                            <div class="achievement-description">{{ achievement.description }}</div>
+                            <div class="achievement-date">{{ achievement.date_awarded.strftime('%d.%m.%Y') }}</div>
+                        </div>
+                        {% if pilot.__tablename__ == 'participant' %}
+                            {% if pilot.is_pilot() and achievement.points > 0 %}
+                            <div class="achievement-points">+{{ achievement.points }}</div>
+                            {% endif %}
+                        {% else %}
+                            <div class="achievement-points">+{{ achievement.points }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="profile__achive__no profile--open-box">
+                    <p class="profile__achive__no--p">Поки що <br> досягнення відсутні</p>
+                </div>
+            {% endif %}
+
+            
+          </div>
+          <!-- Статистика (только для пилотов) -->
+        {% if pilot.__tablename__ == 'participant' %}
+            {% if pilot.is_pilot() %}
+            <div class="profile__item profile__stats">
+                <p class="profile--title">Статистика</p>
+                <div class="profile__stats__box profile--open-box">
+                    <div class="profile__stats__item">
+                        <h2 class="profile__stats__item--h2">{{ pilot.points }}</h2>
+                        <p class="profile__stats__item--p">Загальні очки</p>
+                    </div>
+                    <div class="profile__stats__item">
+                        <h2 class="profile__stats__item--h2">{{ achievements|length }}</h2>
+                        <p class="profile__stats__item--p">Досягнення</p>
+                    </div>
+                    <div class="profile__stats__item">
+                        <h2 class="profile__stats__item--h2">
+                            {% set rank = 1 %}
+                            {% if pilot.subcategory == 'pilot_strike' %}
+                                {% for p in all_strike_pilots %}
+                                    {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {% for p in all_recon_pilots %}
+                                    {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </h2>
+                        <p class="profile__stats__item--p">Місце в категорії</p>
+                    </div>
+                    <div class="profile__stats__item">
+                        <h2 class="profile__stats__item--h2">{{ days_in_federation }}</h2>
+                        <p class="profile__stats__item--p">Днів у федерації</p>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!-- Для не-пилотов показываем только основную информацию -->
+            <div class="profile__item profile__stats">
+                <p class="profile--title">Статистика</p>
+                <div class="profile__stats__box profile--open-box">
+                    <div class="profile__stats__item">
+                        <h2 class="profile__stats__item--h2">{{ achievements|length }}</h2>
+                        <p class="profile__stats__item--p">Досягнення</p>
+                    </div>
+                    <div class="profile__stats__item">
+                        <h2 class="profile__stats__item--h2">{{ days_in_federation }}</h2>
+                        <p class="profile__stats__item--p">Днів у федерації</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <!-- Для старых пилотов показываем полную статистику -->
+          <div class="profile__item profile__stats">
+            <p class="profile--title">Статистика</p>
+            <div class="profile__stats__box profile--open-box">
+              <div class="profile__stats__item">
+                <h2 class="profile__stats__item--h2">{{ pilot.points }}</h2>
+                <p class="profile__stats__item--p">Загальні очки</p>
+              </div>
+              <div class="profile__stats__item">
+                <h2 class="profile__stats__item--h2">{{ achievements|length }}</h2>
+                <p class="profile__stats__item--p">Досягнення</p>
+              </div>
+              <div class="profile__stats__item">
+                <h2 class="profile__stats__item--h2">
+                    {% set rank = 1 %}
+                    {% if pilot.subcategory == 'pilot_strike' %}
+                        {% for p in all_strike_pilots %}
+                            {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {% for p in all_recon_pilots %}
+                            {% if p.id == pilot.id %}{{ loop.index }}{% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </h2>
+                <p class="profile__stats__item--p">Місце в категорії</p>
+              </div>
+              <div class="profile__stats__item">
+                <h2 class="profile__stats__item--h2">{{ days_in_federation }}</h2>
+                <p class="profile__stats__item--p">Днів у федерації</p>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+          
+        </div>
+      </div>
+
+      <div class="profile__qr-show mobile">
+        <div class="profile__qr-show__box">
+          <div class="profile--go-back">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="21" viewBox="0 0 30 21" fill="none"><path d="M9.2131 3.05448C9.70343 2.56851 9.70696 1.77706 9.22099 1.28674C8.73502 0.796407 7.94357 0.792876 7.45324 1.27885L4.46202 4.2435C3.3354 5.36006 2.41461 6.27265 1.7616 7.08576C1.08255 7.93131 0.590996 8.78954 0.459686 9.81973C0.40211 10.2714 0.40211 10.7286 0.459686 11.1803C0.590995 12.2105 1.08255 13.0687 1.7616 13.9142C2.41461 14.7274 3.3354 15.6399 4.46203 16.7565L7.45324 19.7212C7.94357 20.2071 8.73502 20.2036 9.22099 19.7133C9.70696 19.2229 9.70343 18.4315 9.2131 17.9455L6.27482 15.0333C5.08233 13.8514 4.26433 13.038 3.71083 12.3488C3.53095 12.1248 3.3906 11.9277 3.28164 11.75H28.3332C29.0235 11.75 29.5832 11.1904 29.5832 10.5C29.5832 9.80964 29.0235 9.25 28.3332 9.25H3.28164C3.3906 9.07234 3.53095 8.87516 3.71083 8.65118C4.26433 7.96196 5.08233 7.14856 6.27482 5.96667L9.2131 3.05448Z" fill="#6D6D6D"/></svg>
+          </div>
+          <p class="profile__person--name">{{ pilot.callsign }}</p>
+          {% if pilot.__tablename__ == 'participant' %}
+            {% if pilot.is_active %}
+              <div class="profile__person--id active">
+                {{ pilot.participant_id }}
+              </div>
+            {% else %}
+              <div class="profile__person--id">
+              {{ pilot.participant_id }}
+            </div>
+            {% endif %}
+          {% else %}
+            <div class="profile__person--id active">
+              {{ pilot.pilot_id }}
+            </div>
+          {% endif %}
+          <p class="profile__person--p">
+            {% if pilot.__tablename__ == 'participant' %}
+                {% if pilot.is_active %}ID карта активна{% else %}ID карта деактивована{% endif %}
+            {% else %}
+                ID карта активна
+            {% endif %}
+            </p>
+            <img src="{{ url_for('generate_qr', qr_code=pilot.qr_code) }}" alt="" class="profile__person--qr" width="280" height="280" onerror="this.src='/static/images/default-pilot.svg'">
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

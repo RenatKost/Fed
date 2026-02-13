@@ -1,0 +1,324 @@
+{
+    "design_system_profile": {
+      "theme": {
+        "name": "Dark Professional Dashboard",
+        "description": "Темная профессиональная тема с градиентами и яркими акцентами"
+      },
+
+
+        
+      "colors": {
+        "backgrounds": {
+          "primary_background": "#0D1421",
+          "secondary_background": "#1A2332",
+          "card_background": "linear-gradient(135deg, #1E2A3A 0%, #2A3441 100%)",
+          "modal_background": "#1A2332",
+          "sidebar_background": "#0D1421",
+          "header_background": "#0D1421"
+        },
+        "gradients": {
+          "card_gradient": {
+            "colors": ["#1E2A3A", "#2A3441"],
+            "direction": "135deg",
+            "usage": "Применяется к карточкам проектов, основным контейнерам, модальным окнам"
+          },
+          "button_primary_gradient": {
+            "colors": ["#4A90E2", "#357ABD"],
+            "direction": "135deg",
+            "usage": "Основные кнопки действий, CTA элементы"
+          },
+          "accent_gradient": {
+            "colors": ["#00D4AA", "#00A186"],
+            "direction": "135deg",
+            "usage": "Индикаторы прогресса, статусы активности"
+          },
+          "hero_background": {
+            "colors": ["#0D1421", "#1A2332", "#2A3441"],
+            "direction": "radial",
+            "usage": "Фоновые градиенты для hero-секций"
+          }
+        },
+        "text": {
+          "primary": "#FFFFFF",
+          "secondary": "#B8C5D1",
+          "tertiary": "#8A96A3",
+          "accent": "#4A90E2",
+          "success": "#00D4AA",
+          "warning": "#F5A623",
+          "error": "#D0021B"
+        },
+        "borders": {
+          "primary": "#2A3441",
+          "secondary": "#1E2A3A",
+          "accent": "#4A90E2",
+          "success": "#00D4AA"
+        },
+        "shadows": {
+          "card": "0 4px 20px rgba(0, 0, 0, 0.25)",
+          "button": "0 2px 10px rgba(74, 144, 226, 0.3)",
+          "modal": "0 10px 40px rgba(0, 0, 0, 0.4)"
+        }
+      },
+  
+      "typography": {
+        "font_families": {
+          "primary": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+          "heading": "Inter, sans-serif",
+          "mono": "JetBrains Mono, monospace"
+        },
+        "font_sizes": {
+          "xs": "12px",
+          "sm": "14px",
+          "base": "16px",
+          "lg": "18px",
+          "xl": "20px",
+          "2xl": "24px",
+          "3xl": "30px",
+          "4xl": "36px"
+        },
+        "font_weights": {
+          "normal": "400",
+          "medium": "500",
+          "semibold": "600",
+          "bold": "700"
+        },
+        "line_heights": {
+          "tight": "1.2",
+          "normal": "1.5",
+          "relaxed": "1.7"
+        }
+      },
+  
+      "components": {
+        "cards": {
+          "style": {
+            "background": "linear-gradient(135deg, #1E2A3A 0%, #2A3441 100%)",
+            "border": "1px solid #2A3441",
+            "border_radius": "12px",
+            "padding": "20px",
+            "box_shadow": "0 4px 20px rgba(0, 0, 0, 0.25)"
+          },
+          "hover_state": {
+            "transform": "translateY(-2px)",
+            "box_shadow": "0 8px 30px rgba(0, 0, 0, 0.35)",
+            "transition": "all 0.3s ease"
+          },
+          "usage": "Карточки проектов, информационные блоки, контейнеры контента"
+        },
+  
+        "buttons": {
+          "primary": {
+            "background": "linear-gradient(135deg, #4A90E2 0%, #357ABD 100%)",
+            "color": "#FFFFFF",
+            "border": "none",
+            "border_radius": "8px",
+            "padding": "12px 24px",
+            "font_weight": "600",
+            "box_shadow": "0 2px 10px rgba(74, 144, 226, 0.3)"
+          },
+          "secondary": {
+            "background": "transparent",
+            "color": "#4A90E2",
+            "border": "1px solid #4A90E2",
+            "border_radius": "8px",
+            "padding": "12px 24px",
+            "font_weight": "600"
+          },
+          "success": {
+            "background": "linear-gradient(135deg, #00D4AA 0%, #00A186 100%)",
+            "color": "#FFFFFF",
+            "border": "none",
+            "border_radius": "8px",
+            "padding": "12px 24px",
+            "font_weight": "600"
+          },
+          "hover_states": {
+            "primary": {
+              "transform": "translateY(-1px)",
+              "box_shadow": "0 4px 15px rgba(74, 144, 226, 0.4)"
+            },
+            "secondary": {
+              "background": "#4A90E2",
+              "color": "#FFFFFF"
+            }
+          }
+        },
+  
+        "navigation": {
+          "sidebar": {
+            "background": "#0D1421",
+            "width": "240px",
+            "padding": "20px 0"
+          },
+          "nav_items": {
+            "default": {
+              "color": "#8A96A3",
+              "padding": "12px 20px",
+              "border_radius": "0 25px 25px 0",
+              "margin_right": "20px"
+            },
+            "active": {
+              "background": "linear-gradient(135deg, #4A90E2 0%, #357ABD 100%)",
+              "color": "#FFFFFF"
+            },
+            "hover": {
+              "background": "#1A2332",
+              "color": "#B8C5D1"
+            }
+          }
+        },
+  
+        "forms": {
+          "inputs": {
+            "background": "#1A2332",
+            "border": "1px solid #2A3441",
+            "border_radius": "8px",
+            "padding": "12px 16px",
+            "color": "#FFFFFF",
+            "placeholder_color": "#8A96A3"
+          },
+          "input_focus": {
+            "border_color": "#4A90E2",
+            "box_shadow": "0 0 0 3px rgba(74, 144, 226, 0.1)"
+          }
+        },
+  
+        "progress_indicators": {
+          "progress_bar": {
+            "background": "#2A3441",
+            "fill": "linear-gradient(135deg, #00D4AA 0%, #00A186 100%)",
+            "height": "8px",
+            "border_radius": "4px"
+          },
+          "percentage_text": {
+            "color": "#00D4AA",
+            "font_weight": "600"
+          }
+        },
+  
+        "avatars": {
+          "size_sm": "32px",
+          "size_md": "40px",
+          "size_lg": "48px",
+          "border_radius": "50%",
+          "border": "2px solid #2A3441"
+        },
+  
+        "tags_badges": {
+          "default": {
+            "background": "#2A3441",
+            "color": "#B8C5D1",
+            "padding": "4px 12px",
+            "border_radius": "16px",
+            "font_size": "12px",
+            "font_weight": "500"
+          },
+          "success": {
+            "background": "rgba(0, 212, 170, 0.2)",
+            "color": "#00D4AA",
+            "border": "1px solid rgba(0, 212, 170, 0.3)"
+          },
+          "warning": {
+            "background": "rgba(245, 166, 35, 0.2)",
+            "color": "#F5A623",
+            "border": "1px solid rgba(245, 166, 35, 0.3)"
+          }
+        },
+  
+        "modals": {
+          "overlay": {
+            "background": "rgba(13, 20, 33, 0.8)",
+            "backdrop_filter": "blur(4px)"
+          },
+          "content": {
+            "background": "linear-gradient(135deg, #1E2A3A 0%, #2A3441 100%)",
+            "border": "1px solid #2A3441",
+            "border_radius": "16px",
+            "box_shadow": "0 10px 40px rgba(0, 0, 0, 0.4)",
+            "padding": "32px"
+          }
+        }
+      },
+  
+      "layout": {
+        "spacing": {
+          "xs": "4px",
+          "sm": "8px",
+          "md": "16px",
+          "lg": "24px",
+          "xl": "32px",
+          "2xl": "48px",
+          "3xl": "64px"
+        },
+        "breakpoints": {
+          "mobile": "320px",
+          "tablet": "768px",
+          "desktop": "1024px",
+          "wide": "1200px"
+        },
+        "container": {
+          "max_width": "1200px",
+          "padding": "0 24px",
+          "margin": "0 auto"
+        }
+      },
+  
+      "visual_effects": {
+        "animations": {
+          "hover_lift": {
+            "transform": "translateY(-2px)",
+            "transition": "all 0.3s ease"
+          },
+          "fade_in": {
+            "opacity": "0 to 1",
+            "duration": "0.3s",
+            "easing": "ease-out"
+          },
+          "scale_hover": {
+            "transform": "scale(1.05)",
+            "transition": "transform 0.2s ease"
+          }
+        },
+        "blur_effects": {
+          "backdrop_blur": "blur(10px)",
+          "glass_effect": "blur(20px)"
+        }
+      },
+  
+      "usage_rules": {
+        "do": [
+          "Используйте градиенты для карточек и основных контейнеров",
+          "Применяйте эффекты hover для интерактивных элементов",
+          "Используйте темные фоны с контрастным текстом",
+          "Применяйте синие акценты (#4A90E2) для ссылок и кнопок",
+          "Используйте зеленые акценты (#00D4AA) для индикаторов успеха",
+          "Добавляйте тени для создания глубины"
+        ],
+        "dont": [
+          "НЕ применяйте градиенты карточек к иконкам",
+          "НЕ используйте цвета кнопок для обычного текста",
+          "НЕ применяйте тени к текстовым элементам",
+          "НЕ используйте яркие цвета для фоновых элементов",
+          "НЕ смешивайте различные стили границ в одном компоненте",
+          "НЕ применяйте анимации к статичным текстовым блокам"
+        ]
+      },
+  
+      "specific_contexts": {
+        "hero_section": {
+          "background": "radial-gradient(ellipse at center, #1A2332 0%, #0D1421 100%)",
+          "text_color": "#FFFFFF",
+          "accent_color": "#4A90E2"
+        },
+        "dashboard_cards": {
+          "background": "linear-gradient(135deg, #1E2A3A 0%, #2A3441 100%)",
+          "hover_effect": "translateY(-2px) + enhanced shadow"
+        },
+        "navigation_elements": {
+          "inactive": "#8A96A3",
+          "active": "linear-gradient(135deg, #4A90E2 0%, #357ABD 100%)",
+          "hover": "#1A2332 background"
+        }
+      }
+    }
+  }
